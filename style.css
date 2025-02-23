@@ -1,0 +1,106 @@
+
+body{
+    margin:0 !important;
+    padding:0 !important;
+
+}
+
+.red{
+    border:1px solid red;
+}
+.green{
+     border: 1px solid green;
+}
+
+
+.about-sign-in{
+
+    height: 80px;
+    width: 100%;
+    text-align: right;
+
+    
+}
+.banner{
+    /* border: 1px solid red; */
+    padding: 20px;
+    background: url("./banner.jpg") no-repeat;
+    height: 100%;
+      
+    /* background-color: rgb(117, 93, 93); */
+    /* width: 5000px; */
+}
+a.about {
+    margin-right: 30px;
+}
+a.sign-in {
+    margin-right: 80px;
+    padding: 12px;
+    border: 2px solid rgb(71, 153, 71);
+    border-radius: 100px;  
+    color: rgb(68, 177, 68) ;         
+        
+}
+.sign-in,.about{
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bolder;
+    
+}
+
+
+
+.logo{
+    background: no-repeat url(./hapoERP.png) center;
+    height: 61;
+    /* background: no-repeat; */
+ 
+    margin-top: 200;
+}
+
+.btn-start-now{
+    text-align: center;
+    padding: 10px;
+
+}
+button{
+    color: aliceblue;
+    text-transform: uppercase;
+    border: 1px solid rgb(27, 102, 27);
+    border-radius: 100px;
+    padding: 7px 15px;
+    background-color: green;
+    cursor: pointer;
+}
+.text {
+    text-align: center;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+user agent stylesheet
+di
+
+.content-center{
+    height: 50px;
+    /* border: solid red; */
+}
+.left,
+.center,
+.right{
+width: 33%;
+display: inline-block;
+text-align: center;
+margin-top: 20px;
+}
+.uimg {
+    font-size: 30px;
+    padding-top: 10px;
+    display: block;
+}
+img{
+    height: 60px;
+}
+.content-body-2 a{
+    text-decoration:none;
+    color: aliceblue;
+}

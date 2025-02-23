@@ -1,0 +1,94 @@
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+body .banner {
+  /* border: 1px solid red; */
+  padding: 20px;
+  background: url("./banner.jpg") no-repeat;
+  height: 100%;
+  /* background-color: rgb(117, 93, 93); */
+  /* width: 5000px; */
+}
+body .banner .sign-in, body .banner .about {
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: bolder;
+}
+body .banner .about-sign-in {
+  height: 80px;
+  width: 100%;
+  text-align: right;
+}
+body .banner .about-sign-in a.about {
+  margin-right: 30px;
+}
+body .banner .about-sign-in a.sign-in {
+  margin-right: 80px;
+  padding: 12px;
+  border: 2px solid #479947;
+  border-radius: 100px;
+  color: #44b144;
+}
+body .banner .logo {
+  background: no-repeat url(./hapoERP.png) center;
+  height: 61;
+  /* background: no-repeat; */
+  margin-top: 200;
+}
+body .banner .content-center {
+  
+  /* border: solid red; */
+}
+body .banner .content-center .left,
+body .banner .content-center .center,
+body .banner .content-center .right {
+  width: 33%;
+  display: inline-block;
+  text-align: center;
+  margin-top: 20px;
+}
+body .banner .content-center .left img,
+body .banner .content-center .center img,
+body .banner .content-center .right img {
+  height: 60px;
+}
+body .banner .content-center .left .uimg,
+body .banner .content-center .center .uimg,
+body .banner .content-center .right .uimg {
+  font-size: 30px;
+  padding-top: 10px;
+  display: block;
+}
+body .banner .btn-start-now {
+  text-align: center;
+  padding: 10px;
+}
+body .banner .btn-start-now button {
+  color: aliceblue;
+  text-transform: uppercase;
+  border: 1px solid #1b661b;
+  border-radius: 100px;
+  padding: 7px 15px;
+  background-color: green;
+  cursor: pointer;
+}
+body .banner .text  {
+  text-align: center;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+body .content-body-2 a {
+  text-decoration: none;
+  color: aliceblue;
+}
+
+.red {
+  border: 1px solid red;
+}
+
+.green {
+  border: 1px solid green;
+}
+
+/*# sourceMappingURL=custom.css.map */
