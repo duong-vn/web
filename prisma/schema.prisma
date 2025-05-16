@@ -92,3 +92,12 @@ model users {
   posts         posts[]
   reactions     reactions[]
 }
+
+model Groups {
+  group_id    Int      @id @default(autoincrement())
+  name        String
+  description String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  users       Users[]  @relation("GroupMembers")
+}

@@ -128,7 +128,7 @@ export default async function handler(req:any, res:any) {
       });
 
     } catch (error) {
-      console.error('Error deleting user:', error);
+     
       res.status(500).json({ message: 'Something went wrong' });
     }
   }

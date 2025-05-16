@@ -1,0 +1,150 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+// GET all groups
+export async function GET() {
+  try {
+    const groups = await prisma.groups.findMany({
+      include: {
+        group_members: {
+          include: {
+            users: {
+              select: {
+                username: true,
+                full_name: true,
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+    return NextResponse.json(groups);
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error fetching groups' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST create new group
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { group_name, created_by, image } = body;
+
+    if (!group_name) {
+      return NextResponse.json(
+        { message: 'Group name is required' },
+        { status: 400 }
+      );
+    }
+
+    const group = await prisma.groups.create({
+      data: {
+        group_name,
+        created_by,
+        image,
+        number_of_members: 1, // Creator is the first member
+      },
+    });
+
+    // Add creator as a member with 'admin' role
+    if (created_by) {
+      await prisma.group_members.create({
+        data: {
+          group_id: group.group_id,
+          user_id: created_by,
+          role: 'admin',
+        },
+      });
+    }
+
+    return NextResponse.json(
+      { message: 'Group created successfully', group },
+      { status: 201 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error creating group' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT update group
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    const { group_id, group_name, image } = body;
+
+    if (!group_id || !group_name) {
+      return NextResponse.json(
+        { message: 'Group ID and name are required' },
+        { status: 400 }
+      );
+    }
+
+    const updatedGroup = await prisma.groups.update({
+      where: {
+        group_id: Number(group_id),
+      },
+      data: {
+        group_name,
+        image,
+      },
+    });
+
+    return NextResponse.json(
+      { message: 'Group updated successfully', group: updatedGroup },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error updating group' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE group
+export async function DELETE(request: Request) {
+  try {
+    const body = await request.json();
+    const { group_id } = body;
+
+    if (!group_id) {
+      return NextResponse.json(
+        { message: 'Group ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // First delete all group members
+    await prisma.group_members.deleteMany({
+      where: {
+        group_id: Number(group_id),
+      },
+    });
+
+    // Then delete the group
+    await prisma.groups.delete({
+      where: {
+        group_id: Number(group_id),
+      },
+    });
+
+    return NextResponse.json(
+      { message: 'Group deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Error deleting group' },
+      { status: 500 }
+    );
+  }
+} 
