@@ -4,23 +4,10 @@ import { prisma } from '@/lib/prisma';
 // GET all groups
 export async function GET() {
   try {
-    const groups = await prisma.groups.findMany({
-      include: {
-        group_members: {
-          include: {
-            users: {
-              select: {
-                username: true,
-                full_name: true,
-              }
-            }
-          }
-        }
-      },
-      orderBy: {
-        created_at: 'desc',
-      },
-    });
+    const groups = await prisma.groups.findMany(
+     
+    );
+    
     return NextResponse.json(groups);
   } catch (error) {
     return NextResponse.json(
@@ -131,19 +118,44 @@ export async function DELETE(request: Request) {
     });
 
     // Then delete the group
-    await prisma.groups.delete({
-      where: {
-        group_id: Number(group_id),
-      },
-    });
+    await prisma.$executeRaw`
+    DECLARE @group_id INT = ${group_id}; -- Thay 123 bằng giá trị group_id bạn muốn xóa
+
+-- Xóa thành viên nhóm
+DELETE FROM group_members WHERE group_id = @group_id;
+
+-- Xóa bình luận liên quan đến bài viết trong nhóm
+DELETE FROM comments WHERE post_id IN (
+    SELECT post_id FROM posts WHERE group_id = @group_id
+);
+
+-- Xóa phản ứng liên quan đến bài viết và bình luận trong nhóm
+DELETE FROM reactions WHERE post_id IN (
+    SELECT post_id FROM posts WHERE group_id = @group_id
+) OR comment_id IN (
+    SELECT comment_id FROM comments WHERE post_id IN (
+        SELECT post_id FROM posts WHERE group_id = @group_id
+    )
+);
+
+-- Xóa bài viết trong nhóm
+DELETE FROM posts WHERE group_id = @group_id;
+
+-- Xóa nhóm
+DELETE FROM groups WHERE group_id = @group_id;
+    `
 
     return NextResponse.json(
       { message: 'Group deleted successfully' },
       { status: 200 }
     );
   } catch (error) {
+    console.error('Delete group error:', error);
     return NextResponse.json(
-      { message: 'Error deleting group' },
+      { message: 'Error deleting group',
+        error
+       },
+
       { status: 500 }
     );
   }

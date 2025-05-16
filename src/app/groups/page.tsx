@@ -7,22 +7,19 @@ import { mutate } from 'swr';
 import Link from 'next/link';
 import ModalDeleteGroup from './ModalDeleteGroup';
 
-interface Group {
-  group_id: number;
-  name: string;
-  description: string;
-  created_at: string;
-}
+
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<any>(null);
 
   const fetchGroups = async () => {
     const response = await getGroups();
+  console.log("response to fetch group",response);
     if (response.ok) {
       const data = await response.json();
+      console.log("data ",data);
       setGroups(data);
     }
   };
@@ -32,6 +29,7 @@ export default function GroupsPage() {
   }, []);
 
   const handleDeleteClick = (group: Group) => {
+
     setSelectedGroup(group);
     setShowDeleteModal(true);
   };
@@ -87,7 +85,7 @@ export default function GroupsPage() {
             {groups.map((group) => (
               <tr key={group.group_id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{group.name}</div>
+                  <div className="text-sm font-medium text-gray-900">{group.group_name}</div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="text-sm text-gray-500">{group.description}</div>

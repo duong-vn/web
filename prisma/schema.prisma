@@ -35,6 +35,7 @@ model groups {
   group_name        String          @db.NVarChar(255)
   created_by        Int?
   image            String?          @db.Text
+  description       String?          @db.Text
   number_of_posts   Int?            @default(0, map: "DF__groups__number_o__145C0A3F")
   number_of_members Int?            @default(0, map: "DF__groups__number_o__15502E78")
   created_at        DateTime?       @default(now(), map: "DF__groups__created___164452B1") @db.DateTime
@@ -93,11 +94,3 @@ model users {
   reactions     reactions[]
 }
 
-model Groups {
-  group_id    Int      @id @default(autoincrement())
-  name        String
-  description String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  users       Users[]  @relation("GroupMembers")
-}
