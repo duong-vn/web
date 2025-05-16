@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../../prisma/node_modules/.prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -6,7 +6,7 @@ export default async function handler(req:any, res:any) {
   if (req.method === 'GET') {
     try {
       // Lấy tất cả người dùng từ cơ sở dữ liệu
-      const users: any = await prisma.users.findMany();
+      const users: any = await prisma.groups.findMany();
       res.status(200).json(users);  // Trả về dữ liệu người dùng
     } catch (error) {
       res.status(500).json({ error: 'Error fetching users' });
