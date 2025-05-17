@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { signOut } from "next-auth/react"
 const Header = () => {
 
   const {data: session, status} = useSession();
@@ -35,6 +36,10 @@ console.log("Session in Header", session);
               Sign In
             </Link>
             </button>
+            <button onClick={() => signOut( 
+              {redirect: false}
+
+            )}>Sign Out</button>
           </div>
         </div>
       </div>
