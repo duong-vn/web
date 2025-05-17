@@ -6,6 +6,7 @@ import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import Footer from "../components/layout/Footer";
 import { ToastContainer, toast } from 'react-toastify';
+import SessionProvider from "@/components/providers/SessionProviders";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div className="min-h-screen flex flex-col">
+          <SessionProvider>
           <Header />
           <div className="flex flex-1">
             <Sidebar />
@@ -31,6 +33,8 @@ export default function RootLayout({
           </div>
           <Footer />
           <ToastContainer />
+
+          </SessionProvider>
         </div>
       </body>
     </html>

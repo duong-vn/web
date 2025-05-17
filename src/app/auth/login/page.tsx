@@ -14,7 +14,7 @@ export default function LoginPage(){
         const res = await signIn("credentials", {
             email,
             password,
-            redirectTo: "/",
+            redirect: false,
         })
        
         console.log("Login response", res);

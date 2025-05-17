@@ -7,6 +7,8 @@ declare module "next-auth" {
       role?: string; // hoặc kiểu phù hợp bạn dùng
       user_id?: number;
       email?: string;
+        full_name?: string;
+        username?: string;
     } & DefaultSession["user"];
   }
 
@@ -14,6 +16,8 @@ declare module "next-auth" {
     role?: string ;
     user_id?: number;
     email?: string;
+    full_name?: string;
+    username?: string;
 
   }
 
@@ -21,5 +25,7 @@ declare module "next-auth" {
     role?: string ;
     user_id?: number;
     email?: string;
+    full_name?: string;
+    username?: string;
   }
 }
