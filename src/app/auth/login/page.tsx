@@ -2,35 +2,54 @@
 
 import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { signIn } from "next-auth/react"
-export default function LoginPage(){
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+
+export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     const handleLogin = async (e: React.FormEvent) => {
-       console.log("Login clicked", email, password);
         e.preventDefault();
-        const res = await signIn("credentials", {
-            email,
-            password,
-            redirectTo: "/",
-        })
-       
-        console.log("Login response", res);
-    }
+        setIsLoading(true);
+        
+        try {
+            const result = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+                callbackUrl: "/"
+            });
 
+            if (result?.error) {
+                toast.error(result.error);
+            } else {
+                toast.success("Login successful!");
+               
+            }
+        } catch (error: any) {
+            console.error("Error during signIn:", error);
+            toast.error(error.message || "An error occurred during login. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
             <h1 className="text-3xl font-bold">Login</h1>
-            <form className="mt-4 space-y-4 w-full max-w-md"> {/* Added w-full max-w-md */}
+            <form onSubmit={handleLogin} className="mt-4 space-y-4 w-full max-w-md">
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
                     className="w-full p-2 border border-gray-300 rounded"
+                    required
                 />
                 <div className="relative w-full">
                     <input
@@ -39,6 +58,7 @@ export default function LoginPage(){
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded pr-10"
+                        required
                     />
                     <button 
                         type="button"
@@ -54,11 +74,13 @@ export default function LoginPage(){
                     </button>
                 </div>
                 <button
-                    
-                    className="w-full p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-                    onClick={handleLogin}
+                    type="submit"
+                    disabled={isLoading}
+                    className={`w-full p-2 text-white bg-blue-500 rounded hover:bg-blue-600 ${
+                        isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                 >
-                    Login
+                    {isLoading ? 'Logging in...' : 'Login'}
                 </button>
             </form>
         </div>

@@ -33,7 +33,7 @@ export default async function handler(req:any, res:any) {
     }
   } else if (req.method === 'POST') {
     try {
-      const { full_name, username, email, password, gender } = req.body;
+      const { full_name, username, email, password, gender,image } = req.body;
       
      
       if (!username) {
@@ -59,8 +59,14 @@ export default async function handler(req:any, res:any) {
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const user = await prisma.users.create({
-        data: req.body
-      });
+        data: {
+          full_name,
+          username,
+          email,
+          password: hashedPassword,
+          gender,
+          image
+      }});
       res.status(201).json({
         message: 'User created successfully',
         user

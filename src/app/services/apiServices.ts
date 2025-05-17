@@ -115,9 +115,8 @@ export const deleteGroup = (group_id: number) => {
   });
 };
 
-export const postLogin = async (email:string ,password:string) => {
-
-    return fetch(`${API_URL}/verify`, {
+export const postLogin = async (email: string, password: string) => {
+    return fetch('/api/verify', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

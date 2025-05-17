@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-
+import { useSession } from 'next-auth/react';
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-
+const session = useSession;
   return (
     <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-gray-800 min-h-screen transition-all duration-300 relative`}>
       <button
