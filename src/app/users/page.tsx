@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { LuImagePlus } from "react-icons/lu";
-import ModalCreateUser from './ModalCreateUser';
-import UserTable from './UserTable';
+import { motion } from 'framer-motion';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import UserCard from './UserCard';
 import useSWR from 'swr';
+import ModalCreateUser from './ModalCreateUser';
 import ModalUpdateUser from './ModalUpdateUser';
 import ModalDeleteUser from './ModalDeleteUser';
 
@@ -12,63 +13,126 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function UsersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isUpdateModalOpen,setIsUpdateModalOpen] = useState(false);
-  const [isDeleteModalOpen,setIsDeleteModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>();
-  const { data: users = [], error } = useSWR('/api/users', fetcher, {
+  const { data: users = [], isLoading, error } = useSWR('/api/users', fetcher, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
     revalidateOnReconnect: false
   });
-  
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
-  const handleOpenDeleteModal = (user:User) => {
+
+  const handleOpenDeleteModal = (user: User) => {
     setIsDeleteModalOpen(true);
     setSelectedUser(user);
-  }
-  const handleOpenUpdateModal = (user:User) => {
-  setIsUpdateModalOpen(true);
-  setSelectedUser(user);
-  console.log("check user>>>",user)
+  };
 
-}
+  const handleOpenUpdateModal = (user: User) => {
+    setIsUpdateModalOpen(true);
+    setSelectedUser(user);
+  };
 
-  if (error) return <div>Failed to load users</div>;
-  if (!users) return <div>Loading...</div>;
-
-
-
+  if (error) return (
+    <div className="ml-64 mt-16 p-6">
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">Error!</strong>
+        <span className="block sm:inline"> Failed to load users. Please try again later.</span>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-6">
+    <div className="ml-64 mt-16 p-6 min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Users Management</h1>
-          <p className="mt-1 text-sm text-gray-500">Manage your system users</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Users</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage your system users</p>
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleOpenModal}
+          className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
         >
+          <PlusIcon className="h-5 w-5 mr-2" />
           Add New User
-        </button>
+        </motion.button>
       </div>
 
-      {/* Users Table */}
-      <UserTable 
-        users={users.sort((a: User, b: User) => b.user_id - a.user_id)} 
-        handleOpenModal={handleOpenUpdateModal} 
-        handleOpenDeleteModal={handleOpenDeleteModal}
-      />
+      {/* Search and Filter */}
+      <div className="mb-8">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search users..."
+            className="w-full px-4 py-2 pl-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <svg
+            className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+      </div>
 
-      {/* Modal forEdit */}
+      {/* Users Grid */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
+              <div className="h-32 bg-gray-200 dark:bg-gray-700"></div>
+              <div className="p-6">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+                <div className="space-y-3">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {users.map((user: User) => (
+            <UserCard
+              key={user.user_id}
+              user={user}
+              onEdit={handleOpenUpdateModal}
+              onDelete={handleOpenDeleteModal}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Modals */}
       <ModalCreateUser isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-      <ModalUpdateUser isModalOpen={isUpdateModalOpen} setIsModalOpen={setIsUpdateModalOpen} user = {selectedUser} setUser = {setSelectedUser} />
-      <ModalDeleteUser show={isDeleteModalOpen} setShow={setIsDeleteModalOpen} user = {selectedUser} setUser={setSelectedUser} />
+      <ModalUpdateUser 
+        isModalOpen={isUpdateModalOpen} 
+        setIsModalOpen={setIsUpdateModalOpen} 
+        user={selectedUser} 
+        setUser={setSelectedUser} 
+      />
+      <ModalDeleteUser 
+        show={isDeleteModalOpen} 
+        setShow={setIsDeleteModalOpen} 
+        user={selectedUser} 
+        setUser={setSelectedUser} 
+      />
     </div>
   );
 }

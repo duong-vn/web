@@ -3,13 +3,60 @@ import { useState } from "react";
 
 interface IProps {
     users: User[];
-    handleOpenModal: ( user: User) => void;
+    handleOpenModal: (user: User) => void;
     handleOpenDeleteModal: (user: User) => void;
+    isLoading?: boolean;
 }
 
 const UserTable = (props: IProps) => {
-    const { users } = props;
-    console.log(users);
+    const { users, isLoading } = props;
+
+    if (isLoading) {
+        return (
+            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Profile</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Member ID</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+                            <th className="px-6 py-3 text-right text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {[...Array(5)].map((_, index) => (
+                            <tr key={index} className="animate-pulse">
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="h-10 w-10 rounded-full bg-gray-200"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="h-4 bg-gray-200 rounded w-32"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="h-4 bg-gray-200 rounded w-40"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right">
+                                    <div className="h-4 bg-gray-200 rounded w-24 ml-auto"></div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -63,8 +110,12 @@ const UserTable = (props: IProps) => {
                                 >
                                     Edit
                                 </button>
-                                <button className="text-red-600 hover:text-red-900" onClick={ () => props.handleOpenDeleteModal(user)
-                                }>Delete</button>
+                                <button 
+                                    className="text-red-600 hover:text-red-900" 
+                                    onClick={() => props.handleOpenDeleteModal(user)}
+                                >
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     ))}

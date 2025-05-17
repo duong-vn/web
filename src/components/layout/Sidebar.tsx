@@ -1,71 +1,144 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import {
+  HomeIcon,
+  UserGroupIcon,
+  UsersIcon,
+  Cog6ToothIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
+} from '@heroicons/react/24/outline';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <aside className={`${isCollapsed ? 'w-20' : 'w-64'} bg-gray-800 min-h-screen transition-all duration-300 relative`}>
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-4 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
-      >
-        <svg
-          className={`w-4 h-4 transform transition-transform ${isCollapsed ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+  // Handle initial state and hydration
+  useEffect(() => {
+    // Get saved state from localStorage
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    if (savedState !== null) {
+      setIsCollapsed(savedState === 'true');
+    }
+    setMounted(true);
+  }, []);
 
-      <div className="p-4">
-        <div className="space-y-6">
-          <div>
-            <h3 className={`text-lg font-semibold text-white mb-4 ${isCollapsed ? 'hidden' : ''}`}>
-              Navigation
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/" className="flex items-center text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg py-2 px-2 transition-colors">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                  {!isCollapsed && <span className="ml-3">Home</span>}
-                </Link>
-              </li>
-              <li>
-                <Link href="/groups" className="flex items-center text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg py-2 px-2 transition-colors">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  {!isCollapsed && <span className="ml-3">Groups</span>}
-                </Link>
-              </li>
-              <li>
-                <Link href="/users" className="flex items-center text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg py-2 px-2 transition-colors">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  {!isCollapsed && <span className="ml-3">Users</span>}
-                </Link>
-              </li>
-              <li>
-                <Link href="/posts" className="flex items-center text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg py-2 px-2 transition-colors">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H15M9 11l3 3m0 0l3-3m-3 3V8" />
-                  </svg>
-                  {!isCollapsed && <span className="ml-3">Posts</span>}
-                </Link>
-              </li>
-            </ul>
+  // Save state to localStorage when it changes
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('sidebarCollapsed', isCollapsed.toString());
+    }
+  }, [isCollapsed, mounted]);
+
+  const isAuthenticated = status === 'authenticated';
+  // const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = true;
+  const menuItems = [
+    { name: 'Home', href: '/', icon: HomeIcon, show: true },
+    { name: 'Posts', href: '/posts', icon: UserGroupIcon, show: true },
+    { name: 'Users', href: '/users', icon: UsersIcon, show: isAdmin },
+    { name: 'Groups', href: '/groups', icon: UserGroupIcon, show: isAuthenticated },
+    { name: 'Settings', href: '/settings', icon: Cog6ToothIcon, show: isAuthenticated },
+  ];
+
+  // Return loading state if not mounted
+  if (!mounted) {
+    return (
+      <div className="fixed left-0 top-0 h-screen bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700 w-64">
+        <div className="animate-pulse">
+          <div className="h-16 bg-gray-700/50"></div>
+          <div className="space-y-4 p-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-10 bg-gray-700/50 rounded-lg"></div>
+            ))}
           </div>
         </div>
       </div>
-    </aside>
+    );
+  }
+
+  return (
+    <div className="fixed left-0 top-0 h-screen bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700 transition-all duration-500 z-40">
+      <div className={`h-full transition-all duration-500 ${isCollapsed ? 'w-20' : 'w-64'}`}>
+        {/* Toggle Button */}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="absolute -right-3 top-6 bg-gray-800 border border-gray-700 rounded-full p-1.5 shadow-lg hover:bg-gray-700 transition-all duration-300 hover:scale-110 z-50"
+        >
+          {isCollapsed ? (
+            <ChevronRightIcon className="h-4 w-4 text-gray-300" />
+          ) : (
+            <ChevronLeftIcon className="h-4 w-4 text-gray-300" />
+          )}
+        </button>
+
+        {/* Logo/Brand */}
+        <div className="p-6">
+          <h1 className={`text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent transition-all duration-500 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
+            MyWebsite
+          </h1>
+        </div>
+
+        {/* Menu Items */}
+        <nav className="mt-4 px-4">
+          <ul className="space-y-2">
+            {menuItems.map((item) => {
+              if (!item.show) return null;
+              const isActive = pathname === item.href;
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className={`flex items-center px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden
+                      ${isActive 
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/20' 
+                        : 'text-gray-300 hover:bg-gray-700/50'
+                      }
+                      ${isCollapsed ? 'justify-center' : ''}
+                    `}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${isActive ? 'opacity-100' : ''}`}></div>
+                    <item.icon className={`h-5 w-5 relative z-10 transition-transform duration-300 group-hover:scale-110 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
+                    {!isCollapsed && (
+                      <span className="relative z-10 font-medium transition-all duration-300 group-hover:translate-x-1">
+                        {item.name}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* User Info */}
+        {isAuthenticated && !isCollapsed && (
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-xl backdrop-blur-sm">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <span className="text-white font-medium">
+                  {session.user?.email?.[0]?.toUpperCase()}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-200 truncate">
+                  {session.user?.email}
+                </p>
+                <p className="text-xs text-gray-400 capitalize">
+                  {session.user?.role}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

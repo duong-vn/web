@@ -40,6 +40,7 @@ providers: [
             role: data.user.role,
             full_name: data.user.full_name,
             username: data.user.username,
+           
             
 
 
@@ -60,6 +61,7 @@ callbacks: {
       token.email = user.email; // thường email đã có sẵn nhưng bạn muốn chắc chắn
       token.full_name = user.full_name;
       token.username = user.username;
+    
     }
      console.log("JWT token after", token);
     console.log("JWT user after", user);
@@ -75,6 +77,7 @@ callbacks: {
       session.user.email = token.email as string;
       session.user.full_name = token.full_name as string;
       session.user.username = token.username as string;
+      
     }
     console.log("Session after", session);
     console.log("Token after", token);

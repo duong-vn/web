@@ -31,7 +31,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
-          <Footer />
+          {/* <Footer /> */}
           <ToastContainer />
 
           </SessionProvider>
