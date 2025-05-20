@@ -58,15 +58,11 @@ export default async function handler(req:any, res:any) {
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await prisma.users.create({
-        data: {
-          full_name,
-          username,
-          email,
-          password: hashedPassword,
-          gender,
-          image
-      }});
+     const user = await prisma.$queryRaw`
+  INSERT INTO users (full_name, username, email, password, gender, image)
+  OUTPUT inserted.*
+  VALUES (${full_name}, ${username}, ${email}, ${hashedPassword}, ${gender}, ${image});
+`;
       res.status(201).json({
         message: 'User created successfully',
         user
@@ -124,18 +120,30 @@ export default async function handler(req:any, res:any) {
         return;
       }
 
-      const deletedUser = await prisma.users.delete({
-        where: { user_id }
-      });
+      // Delete all user's data in a transaction
+      await prisma.$executeRaw`BEGIN TRANSACTION;`
+
+try {
+  await prisma.$executeRaw`DELETE FROM reactions WHERE user_id = ${user_id};`;
+  await prisma.$executeRaw`DELETE FROM comments WHERE user_id = ${user_id};`;
+  await prisma.$executeRaw`DELETE FROM posts WHERE user_id = ${user_id};`;
+  await prisma.$executeRaw`DELETE FROM group_members WHERE user_id = ${user_id};`;
+  await prisma.$executeRaw`UPDATE groups SET created_by = NULL WHERE created_by = ${user_id};`;
+  await prisma.$executeRaw`DELETE FROM users WHERE user_id = ${user_id};`;
+
+  await prisma.$executeRaw`COMMIT;`;
+} catch (error) {
+  await prisma.$executeRaw`ROLLBACK;`;
+  throw error;
+}
 
       res.status(200).json({
-        message: 'User deleted successfully',
-        user: deletedUser
+        message: 'User and all associated data deleted successfully'
       });
 
     } catch (error) {
-     
-      res.status(500).json({ message: 'Something went wrong' });
+      console.log("Error deleting user:", error);
+      res.status(500).json({ message: 'Error deleting user. Please try again.' });
     }
   }
 }

@@ -8,7 +8,7 @@ import useSWR from 'swr';
 import ModalCreateUser from './ModalCreateUser';
 import ModalUpdateUser from './ModalUpdateUser';
 import ModalDeleteUser from './ModalDeleteUser';
-
+import { useSession } from 'next-auth/react';
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function UsersPage() {
@@ -16,11 +16,12 @@ export default function UsersPage() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>();
-  const { data: users = [], isLoading, error } = useSWR('/api/users', fetcher, {
+  const { data, isLoading, error } = useSWR('/api/users', fetcher, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
     revalidateOnReconnect: false
   });
+const { data: session } = useSession();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -44,23 +45,25 @@ export default function UsersPage() {
       </div>
     </div>
   );
-
+ 
   return (
     <div className="ml-64 mt-16 p-6 min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
+    
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Users</h1>
           <p className="text-gray-600 dark:text-gray-400">Manage your system users</p>
         </div>
+
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleOpenModal}
           className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
+          disabled={session?.user?.role !== 'admin'}
         >
           <PlusIcon className="h-5 w-5 mr-2" />
-          Add New User
+          {session?.user?.role !== 'admin'?'You must be admin to add user' : 'Add New User'}
         </motion.button>
       </div>
 
@@ -108,7 +111,7 @@ export default function UsersPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.map((user: User) => (
+          {data.map((user: User) => (
             <UserCard
               key={user.user_id}
               user={user}

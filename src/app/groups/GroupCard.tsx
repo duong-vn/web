@@ -4,15 +4,7 @@ import { motion } from 'framer-motion';
 import { UserGroupIcon, DocumentTextIcon, CalendarIcon } from '@heroicons/react/24/outline';
 
 interface GroupCardProps {
-  group: {
-    id: number;
-    name: string;
-    description: string;
-    memberCount: number;
-    postCount: number;
-    createdAt: string;
-    image?: string;
-  };
+  group:Group
 }
 
 const GroupCard = ({ group }: GroupCardProps) => {
@@ -28,7 +20,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
         {group.image ? (
           <img
             src={group.image}
-            alt={group.name}
+            alt={group.group_name}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -41,7 +33,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
       {/* Group Info */}
       <div className="p-6">
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-          {group.name}
+          {group.group_name}
         </h3>
         <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
           {group.description}
@@ -52,7 +44,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
           <div className="flex flex-col items-center">
             <UserGroupIcon className="h-5 w-5 text-blue-500 mb-1" />
             <span className="text-sm font-medium text-gray-900 dark:text-white">
-              {group.memberCount}
+              {group.number_of_members}
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400">
               Members
@@ -61,7 +53,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
           <div className="flex flex-col items-center">
             <DocumentTextIcon className="h-5 w-5 text-purple-500 mb-1" />
             <span className="text-sm font-medium text-gray-900 dark:text-white">
-              {group.postCount}
+              {group.number_of_posts}
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400">
               Posts
@@ -70,7 +62,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
           <div className="flex flex-col items-center">
             <CalendarIcon className="h-5 w-5 text-green-500 mb-1" />
             <span className="text-sm font-medium text-gray-900 dark:text-white">
-              {new Date(group.createdAt).toLocaleDateString()}
+              {new Date(group.created_at).toLocaleDateString()}
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400">
               Created

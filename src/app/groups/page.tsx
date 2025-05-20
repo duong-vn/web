@@ -4,41 +4,20 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import GroupCard from './GroupCard';
+import useSWR from 'swr';
+import { groups } from '@prisma/client';
 
-// Mock data - replace with actual API call
-const mockGroups = [
-  {
-    id: 1,
-    name: 'Web Development',
-    description: 'A group for web developers to share knowledge and experiences.',
-    memberCount: 156,
-    postCount: 89,
-    createdAt: '2024-01-15',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2072&q=80'
-  },
-  {
-    id: 2,
-    name: 'UI/UX Design',
-    description: 'Share and discuss UI/UX design trends, tools, and best practices.',
-    memberCount: 243,
-    postCount: 156,
-    createdAt: '2024-02-01'
-  },
-  {
-    id: 3,
-    name: 'Mobile Development',
-    description: 'Everything about mobile app development, from iOS to Android.',
-    memberCount: 189,
-    postCount: 112,
-    createdAt: '2024-01-20',
-    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
-  },
-  // Add more mock groups as needed
-];
-
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 export default function GroupsPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { data : groups = [] , isLoading, error } = useSWR('http://localhost:3000/api/groups', fetcher, {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false
+    });
 
+
+console.log("check group >>",groups);
   return (
     <div className="ml-64 mt-16 p-6 min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -84,8 +63,8 @@ export default function GroupsPage() {
 
       {/* Groups Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockGroups.map((group) => (
-          <GroupCard key={group.id} group={group} />
+        {groups.map((group : Group) => (
+          <GroupCard key={group.group_id} group={group} />
         ))}
       </div>
 

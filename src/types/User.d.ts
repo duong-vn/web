@@ -6,6 +6,7 @@ interface User {
     gender: string;
     password: string;
     image: string;
+    role: string;
 }
 
 interface Group {
@@ -14,6 +15,7 @@ interface Group {
     created_by: number;
     description:string,
     number_of_posts: number;
+    number_of_members: number;
     created_at: string;
     image:string;
   }

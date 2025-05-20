@@ -6,8 +6,8 @@ BEGIN TRAN;
 CREATE TABLE [dbo].[comments] (
     [comment_id] INT NOT NULL IDENTITY(1,1),
     [content] TEXT NOT NULL,
-    [user_id] INT,
-    [post_id] INT,
+    [user_id] INT NOT NULL,
+    [post_id] INT NOT NULL,
     [created_at] DATETIME CONSTRAINT [DF__comments__create__239E4DCF] DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT [PK__comments__E7957687AC02D544] PRIMARY KEY CLUSTERED ([comment_id])
 );
@@ -26,6 +26,8 @@ CREATE TABLE [dbo].[groups] (
     [group_id] INT NOT NULL IDENTITY(1,1),
     [group_name] NVARCHAR(255) NOT NULL,
     [created_by] INT,
+    [image] TEXT,
+    [description] TEXT,
     [number_of_posts] INT CONSTRAINT [DF__groups__number_o__145C0A3F] DEFAULT 0,
     [number_of_members] INT CONSTRAINT [DF__groups__number_o__15502E78] DEFAULT 0,
     [created_at] DATETIME CONSTRAINT [DF__groups__created___164452B1] DEFAULT CURRENT_TIMESTAMP,
@@ -70,6 +72,8 @@ CREATE TABLE [dbo].[users] (
     [email] NVARCHAR(255) NOT NULL,
     [full_name] NVARCHAR(255) NOT NULL,
     [username] NVARCHAR(255) NOT NULL,
+    [password] NVARCHAR(1000) NOT NULL,
+    [image] TEXT,
     [gender] NVARCHAR(10),
     [created_at] DATETIME CONSTRAINT [DF__users__created_a__117F9D94] DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT [PK__users__B9BE370F4ADB77BF] PRIMARY KEY CLUSTERED ([user_id]),
