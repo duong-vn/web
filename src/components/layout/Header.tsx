@@ -130,6 +130,7 @@ const Header = () => {
                 </AnimatePresence>
               </div>
             ) : (
+              <>
               <Link href="/auth/login">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -139,6 +140,16 @@ const Header = () => {
                   Sign in
                 </motion.button>
               </Link>
+              <Link href="/auth/register">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:shadow-lg transition-all duration-300"
+                >
+                  Sign up
+                </motion.button>
+              </Link>
+              </>
             )}
           </div>
         </div>

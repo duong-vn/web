@@ -5,7 +5,7 @@ interface User {
     email: string;
     gender: string;
     password: string;
-    image: string;
+    image: string | null;
     role: string;
 }
 
@@ -17,7 +17,7 @@ interface Group {
     number_of_posts: number;
     number_of_members: number;
     created_at: string;
-    image:string;
+    image:string | null;
   }
 
   type UserWithRole = {

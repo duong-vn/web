@@ -1,14 +1,18 @@
 interface Group {
   group_id: number;
-  name: string;
+  group_name: string;
   description: string;
   created_at: string;
+  created_by: number;
+  number_of_members: number;
+  number_of_posts: number;
+  image: string | null;
 }
 
 interface IProps {
   show: boolean;
   setShow: (isOpen: boolean) => void;
-  group: Group | null;
+  group: Group ;
   onConfirm: () => void;
 }
 
@@ -29,7 +33,7 @@ const ModalDeleteGroup = ({ show, setShow, group, onConfirm }: IProps) => {
                 </h3>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    Are you sure you want to delete the group "{group?.name}"? This action cannot be undone.
+                    Are you sure you want to delete the group "{group?.group_name}"? This action cannot be undone.
                   </p>
                 </div>
               </div>

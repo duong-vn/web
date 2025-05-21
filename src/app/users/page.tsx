@@ -23,6 +23,7 @@ export default function UsersPage() {
   });
 const { data: session } = useSession();
 
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -60,7 +61,7 @@ const { data: session } = useSession();
           whileTap={{ scale: 0.95 }}
           onClick={handleOpenModal}
           className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
-          disabled={session?.user?.role !== 'admin'}
+          // disabled={session?.user?.role !== 'admin'}
         >
           <PlusIcon className="h-5 w-5 mr-2" />
           {session?.user?.role !== 'admin'?'You must be admin to add user' : 'Add New User'}

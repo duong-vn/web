@@ -3,21 +3,49 @@
 import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { signIn } from "next-auth/react"
+import { toast } from 'react-toastify';
+
 export default function LoginPage(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    
 
+    const validateEmail = (email: string) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
     const handleLogin = async (e: React.FormEvent) => {
-       console.log("Login clicked", email, password);
         e.preventDefault();
-        const res = await signIn("credentials", {
-            email,
-            password,
-            redirectTo:"/"
-        })
-       
-        console.log("Login response", res);
+        if (!email || !password) {
+            toast.error("Please fill in all fields");
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            toast.error("Invalid email format");
+            return;
+        }
+
+        try {
+            const res = await signIn("credentials", {
+                email,
+                password,
+                // redirectTo:"/"
+                redirect: false,
+            })
+            console.log("res from login", res);
+            if (res?.error) {
+                toast.error("Invalid credentials");
+            } else {
+                toast.success("Login successful");
+                // Redirect to the home page or any other page
+                window.location.href = "/";
+            }
+        } catch (error) {
+            console.error("Login error", error);
+            toast.error("An error occurred during login");
+        }   
     }
 
 

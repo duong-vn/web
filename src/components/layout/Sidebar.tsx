@@ -37,8 +37,8 @@ const Sidebar = () => {
   }, [isCollapsed, mounted]);
 
   const isAuthenticated = status === 'authenticated';
-  const isAdmin = session?.user?.role === 'admin';
-  // const isAdmin = true;
+  // const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = true;
   const menuItems = [
     { name: 'Home', href: '/', icon: HomeIcon, show: true },
     { name: 'Posts', href: '/posts', icon: UserGroupIcon, show: true },

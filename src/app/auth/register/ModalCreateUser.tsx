@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import {mutate} from 'swr';
 import {toast} from 'react-toastify';
-import { postCreateUser } from '../services/apiServices';
+import { postCreateUser } from '@/app/services/apiServices';
+import { useRouter } from 'next/navigation';
 interface IProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
@@ -20,7 +21,7 @@ const ModalCreateUser = (props: IProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [image, setImage] = useState<any|null>(null);
   const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-
+  const router = useRouter();
   const validateEmail = (e:string) => {
     return isValidEmail.test(e);
   };
@@ -65,7 +66,8 @@ console.log("submitting image>>>",image);
       if (res.ok) {
         mutate('/api/users');
         toast.success('User created successfully');
-        handleCloseModal();
+        router.push('/auth/login');
+       
       } else {
         toast.error(data.message || 'Error creating user');
       }
@@ -81,7 +83,7 @@ console.log("submitting image>>>",image);
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
           <div className="relative top-20 mx-auto p-6 border w-[500px] shadow-lg rounded-lg bg-white">
             <div className="mt-3">
-              <h3 className="text-lg font-medium leading-6 text-gray-900">Create User</h3>
+              <h3 className="text-lg font-medium leading-6 text-gray-900">Register</h3>
               <form className="mt-4 space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Full Name</label>

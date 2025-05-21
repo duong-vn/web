@@ -5,16 +5,20 @@ import { motion } from 'framer-motion';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import GroupCard from './GroupCard';
 import useSWR from 'swr';
-import { groups } from '@prisma/client';
+import { useSession } from 'next-auth/react';
+import ModalCreateGroup from './ModalCreateGroup';
+import { group } from 'console';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 export default function GroupsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { data : groups = [] , isLoading, error } = useSWR('http://localhost:3000/api/groups', fetcher, {
+    const { data : groups = [] , isLoading, error } = useSWR('api/groups', fetcher, {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false
     });
+
+    const {data:session} = useSession();
 
 
 console.log("check group >>",groups);
@@ -68,12 +72,12 @@ console.log("check group >>",groups);
         ))}
       </div>
 
-      {/* Create Group Modal - Add your modal component here */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          {/* Add your modal content here */}
-        </div>
-      )}
+     
+ 
+        
+      <ModalCreateGroup isModalOpen = {isModalOpen} setIsModalOpen={setIsModalOpen} created_by = {session?.user.user_id || null}/>
+       
+    
     </div>
   );
 }

@@ -1,5 +1,7 @@
-import { PrismaClient } from '../../prisma/node_modules/.prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { NextApiRequest, NextApiResponse } from 'next';
+
 const prisma = new PrismaClient();
 
 // Helper function to validate base64 image
@@ -17,19 +19,47 @@ const prisma = new PrismaClient();
 //   }
 // };
 
-export default async function handler(req:any, res:any) {
-
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-  const validateEmail = (e:string) => {
+  const validateEmail = (e: string) => {
     return isValidEmail.test(e);
   };
+
   if (req.method === 'GET') {
     try {
-      const users: any = await prisma.users.findMany();
-      res.status(200).json(users);
+      // const users = await prisma.users.findMany({
+      //   select: {
+      //     user_id: true,
+      //     full_name: true,
+      //     username: true,
+      //     email: true,
+      //     gender: true,
+      //     image: true,
+      //     created_at: true,
+          
+      //   }
+      // });
+          const users = await prisma.$queryRaw`
+            SELECT *
+            FROM users
+            Order by user_id DESC
+          
+          `
+
+
+
+
+
+      if (!users) {
+        return res.status(404).json({ message: 'No users found' });
+      }
+
+      // Transform the data to include role from group_members
+      return res.status(200).json(users);
     } catch (error) {
-      res.status(500).json({ error: 'Error fetching users' });
+      console.error('Error fetching users:', error);
+      return res.status(500).json({ message: 'Error fetching users' });
     }
   } else if (req.method === 'POST') {
     try {
@@ -61,7 +91,7 @@ export default async function handler(req:any, res:any) {
      const user = await prisma.$queryRaw`
   INSERT INTO users (full_name, username, email, password, gender, image)
   OUTPUT inserted.*
-  VALUES (${full_name}, ${username}, ${email}, ${hashedPassword}, ${gender}, ${image});
+  VALUES (${full_name}, ${username}, ${email}, ${hashedPassword}, ${gender}, ${image??''});
 `;
       res.status(201).json({
         message: 'User created successfully',
@@ -112,28 +142,32 @@ export default async function handler(req:any, res:any) {
       res.status(500).json({ message: 'Something went wrong' });
     }
   }else if ( req.method === 'DELETE') {
+    console.log("body delete",req.body);
     try {
       const { user_id } = req.body;
-
+      console.log("User id in delete", user_id);
       if (!user_id) {
         res.status(400).json({ message: 'User ID is required' });
         return;
       }
 
-      // Delete all user's data in a transaction
-      await prisma.$executeRaw`BEGIN TRANSACTION;`
+   
 
 try {
-  await prisma.$executeRaw`DELETE FROM reactions WHERE user_id = ${user_id};`;
-  await prisma.$executeRaw`DELETE FROM comments WHERE user_id = ${user_id};`;
-  await prisma.$executeRaw`DELETE FROM posts WHERE user_id = ${user_id};`;
-  await prisma.$executeRaw`DELETE FROM group_members WHERE user_id = ${user_id};`;
-  await prisma.$executeRaw`UPDATE groups SET created_by = NULL WHERE created_by = ${user_id};`;
-  await prisma.$executeRaw`DELETE FROM users WHERE user_id = ${user_id};`;
+const sql = `
+BEGIN TRANSACTION;
+DELETE FROM reactions WHERE user_id = ${user_id};
+DELETE FROM comments WHERE user_id = ${user_id};
+DELETE FROM posts WHERE user_id = ${user_id};
+DELETE FROM group_members WHERE user_id = ${user_id};
+UPDATE groups SET created_by = NULL WHERE created_by = ${user_id};
+DELETE FROM users WHERE user_id = ${user_id};
+COMMIT;
+`
 
-  await prisma.$executeRaw`COMMIT;`;
+await prisma.$executeRawUnsafe(sql);
 } catch (error) {
-  await prisma.$executeRaw`ROLLBACK;`;
+  
   throw error;
 }
 

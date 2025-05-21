@@ -29,7 +29,7 @@ const ModalCreateUser = (props: IProps) => {
     if (event.target && event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setImagePreview(URL.createObjectURL(file)); // For visual preview
-
+      console.log("url create obj",URL.createObjectURL(file));
       // Convert file to Base64 and set it in state
       const reader = new FileReader();
       reader.onloadend = () => {

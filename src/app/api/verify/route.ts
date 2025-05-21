@@ -33,13 +33,14 @@ export async function POST(request: NextRequest) {
                     FROM users u
                     LEFT JOIN group_members gm ON u.user_id = gm.user_id
                     WHERE u.email = ${email}
-                    Order By gm.role DESC
+                    Order By gm.role ASC
         
         
         
         ` 
-        const user = users[0];
         
+        const user = users[0];
+       
         console.log("User in route api", user);
 
         if (!user) {
@@ -52,8 +53,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: 'User verified successfully',
             user
          }, { status: 200 });
+         
     } catch (error) {
         console.error('Error verifying user:', error);
-        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ message: 'Internal server error',error }, { status: 401 });
     }
 }

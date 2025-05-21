@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
- 
 }
 
 datasource db {
@@ -14,30 +13,30 @@ model comments {
   user_id    Int
   post_id    Int
   created_at DateTime?   @default(now(), map: "DF__comments__create__239E4DCF") @db.DateTime
-  posts      posts?      @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "FK__comments__post_i__25869641")
-  users      users?      @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK__comments__user_i__24927208")
+  posts      posts       @relation(fields: [post_id], references: [post_id], onUpdate: NoAction, map: "FK__comments__post_i__25869641")
+  users      users       @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "FK__comments__user_i__24927208")
   reactions  reactions[]
 }
 
 model group_members {
- 
   group_id  Int
   user_id   Int
   role      String    @db.NVarChar(50)
   joined_at DateTime? @default(now(), map: "DF__group_mem__joine__1A14E395") @db.DateTime
-  groups    groups   @relation(fields: [group_id], references: [group_id], onDelete: NoAction, onUpdate: NoAction, map: "FK__group_mem__group__1B0907CE")
-  users     users   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK__group_mem__user___1BFD2C07")
-@@id([user_id, group_id])
+  groups    groups    @relation(fields: [group_id], references: [group_id], onUpdate: NoAction, map: "FK__group_mem__group__1B0907CE")
+  users     users     @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "FK__group_mem__user___1BFD2C07")
+
+  @@id([user_id, group_id])
 }
 
 model groups {
   group_id          Int             @id(map: "PK__groups__D57795A04E0C402C") @default(autoincrement())
   group_name        String          @db.NVarChar(255)
   created_by        Int?
-  image            String?          @db.Text
-  description       String?          @db.Text
-  number_of_posts   Int?            @default(0, map: "DF__groups__number_o__145C0A3F")
-  number_of_members Int?            @default(0, map: "DF__groups__number_o__15502E78")
+  image             String?         @db.Text
+  description       String?         @db.Text
+  number_of_posts   Int?            @default(1, map: "DF__groups__number_o__145C0A3F")
+  number_of_members Int?            @default(1, map: "DF__groups__number_o__15502E78")
   created_at        DateTime?       @default(now(), map: "DF__groups__created___164452B1") @db.DateTime
   group_members     group_members[]
   users             users?          @relation(fields: [created_by], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "FK__groups__created___173876EA")
@@ -93,4 +92,3 @@ model users {
   posts         posts[]
   reactions     reactions[]
 }
-

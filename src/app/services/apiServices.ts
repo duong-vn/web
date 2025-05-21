@@ -76,15 +76,17 @@ export const getGroupById = async (id: string) => {
   });
 };
 
-export const createGroup = (name: string, description: string) => {
+export const createGroup = (name: string, description: string,image:string |null, created_by:number | null) => {
   return fetch(`${API_URL}/groups`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      name,
+      group_name:name,
       description,
+      image,
+      created_by
     }),
   });
 };
@@ -128,6 +130,35 @@ export const postLogin = async (email:string ,password:string) => {
         }),
     });
 }
+export const deleteReactions = async (reaction_id : number)=> {
+
+  return await fetch(`${API_URL}/reactions`,{
+    method:'DELETE',
+    headers :{
+      'Content-type':'application/json'
+    },
+    body:JSON.stringify({
+      reaction_id
+
+    })
+
+
+  })
+
+}
+
+export const deleteComment = async (comment_id : number)=> {
+ return await fetch(`${API_URL}/comments`,{
+  method: 'DELETE',
+  headers:{
+    'Content-type':'application/json'
+  },
+  body: JSON.stringify({
+    comment_id
+  })
+ })
+}
+
 
 export { postCreateUser, putUpdateUser, deleteUser,
     
