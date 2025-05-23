@@ -9,7 +9,7 @@ datasource db {
 
 model comments {
   comment_id Int         @id(map: "PK__comments__E7957687AC02D544") @default(autoincrement())
-  content    String      @db.Text
+  content    String      @db.NVarChar(Max)
   user_id    Int
   post_id    Int
   created_at DateTime?   @default(now(), map: "DF__comments__create__239E4DCF") @db.DateTime
@@ -21,7 +21,6 @@ model comments {
 model group_members {
   group_id  Int
   user_id   Int
-  role      String    @db.NVarChar(50)
   joined_at DateTime? @default(now(), map: "DF__group_mem__joine__1A14E395") @db.DateTime
   groups    groups    @relation(fields: [group_id], references: [group_id], onUpdate: NoAction, map: "FK__group_mem__group__1B0907CE")
   users     users     @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "FK__group_mem__user___1BFD2C07")
@@ -33,6 +32,7 @@ model groups {
   group_id          Int             @id(map: "PK__groups__D57795A04E0C402C") @default(autoincrement())
   group_name        String          @db.NVarChar(255)
   created_by        Int?
+  privacy           String?          @db.VarChar(10)
   image             String?         @db.Text
   description       String?         @db.Text
   number_of_posts   Int?            @default(1, map: "DF__groups__number_o__145C0A3F")
@@ -48,6 +48,7 @@ model posts {
   content    String      @db.Text
   user_id    Int?
   group_id   Int?
+  image       String?     @db.Text
   created_at DateTime?   @default(now(), map: "DF__posts__created_a__1ED998B2") @db.DateTime
   comments   comments[]
   groups     groups?     @relation(fields: [group_id], references: [group_id], onDelete: NoAction, onUpdate: NoAction, map: "FK__posts__group_id__20C1E124")
@@ -84,6 +85,7 @@ model users {
   username      String          @db.NVarChar(255)
   password      String
   image         String?         @db.Text
+  role          String?         @db.NVarChar(10)
   gender        String?         @db.NVarChar(10)
   created_at    DateTime?       @default(now(), map: "DF__users__created_a__117F9D94") @db.DateTime
   comments      comments[]

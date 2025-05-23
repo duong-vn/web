@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
 import "./globals.css";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
-import Footer from "../components/layout/Footer";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import SessionProvider from "@/components/providers/SessionProviders";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,20 +22,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen flex flex-col">
-          <SessionProvider>
-          <Header />
-          <div className="flex flex-1">
-            <Sidebar />
-            <main className="flex-1 p-8">
-              {children}
-            </main>
+        <SessionProvider>
+          <div className="min-h-screen bg-gray-50">
+            <Header />
+            <div className="flex">
+              <Sidebar />
+              <main className="flex-1 p-4">
+                {children}
+              </main>
+            </div>
+            <ToastContainer />
           </div>
-          {/* <Footer /> */}
-          <ToastContainer />
-
-          </SessionProvider>
-        </div>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { UserGroupIcon, DocumentTextIcon, CalendarIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
@@ -38,14 +37,9 @@ const GroupCard = ({ group }: GroupCardProps) => {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={{ y: -5 }}
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
-      >
+      <div className="bg-white border rounded-lg overflow-hidden hover:border-emerald-500 transition-colors">
         {/* Group Image */}
-        <div className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 relative">
+        <div className="h-48 bg-emerald-100 relative">
           {group.image ? (
             <img
               src={group.image}
@@ -54,7 +48,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <UserGroupIcon className="h-16 w-16 text-white/50" />
+              <UserGroupIcon className="h-16 w-16 text-emerald-400" />
             </div>
           )}
           {isAdmin && (
@@ -68,51 +62,51 @@ const GroupCard = ({ group }: GroupCardProps) => {
         </div>
 
         {/* Group Info */}
-        <div className="p-6">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        <div className="p-4">
+          <h3 className="text-xl font-semibold text-emerald-900 mb-2">
             {group.group_name}
           </h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+          <p className="text-emerald-600 mb-4 line-clamp-2">
             {group.description}
           </p>
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="flex flex-col items-center">
-              <UserGroupIcon className="h-5 w-5 text-blue-500 mb-1" />
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
+              <UserGroupIcon className="h-5 w-5 text-emerald-500 mb-1" />
+              <span className="text-sm font-medium text-emerald-900">
                 {group.number_of_members}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-emerald-600">
                 Members
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <DocumentTextIcon className="h-5 w-5 text-purple-500 mb-1" />
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
+              <DocumentTextIcon className="h-5 w-5 text-emerald-500 mb-1" />
+              <span className="text-sm font-medium text-emerald-900">
                 {group.number_of_posts}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-emerald-600">
                 Posts
               </span>
             </div>
             <div className="flex flex-col items-center">
-              <CalendarIcon className="h-5 w-5 text-green-500 mb-1" />
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
+              <CalendarIcon className="h-5 w-5 text-emerald-500 mb-1" />
+              <span className="text-sm font-medium text-emerald-900">
                 {new Date(group.created_at).toLocaleDateString()}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-emerald-600">
                 Created
               </span>
             </div>
           </div>
 
           {/* Action Button */}
-          <button className="w-full py-2 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300">
+          <button className="w-full py-2 px-4 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors">
             Join Group
           </button>
         </div>
-      </motion.div>
+      </div>
 
       <ModalDeleteGroup
         show={showDeleteModal}

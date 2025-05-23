@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import UserCard from './UserCard';
 import useSWR from 'swr';
 import ModalCreateUser from './ModalCreateUser';
 import ModalUpdateUser from './ModalUpdateUser';
 import ModalDeleteUser from './ModalDeleteUser';
 import { useSession } from 'next-auth/react';
+
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function UsersPage() {
@@ -21,8 +20,7 @@ export default function UsersPage() {
     revalidateIfStale: false,
     revalidateOnReconnect: false
   });
-const { data: session } = useSession();
-
+  const { data: session } = useSession();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -39,91 +37,111 @@ const { data: session } = useSession();
   };
 
   if (error) return (
-    <div className="ml-64 mt-16 p-6">
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <div className="p-4">
+      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
         <strong className="font-bold">Error!</strong>
         <span className="block sm:inline"> Failed to load users. Please try again later.</span>
       </div>
     </div>
   );
- 
+  
   return (
-    <div className="ml-64 mt-16 p-6 min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900">
-    
-      <div className="flex justify-between items-center mb-8">
+    <div className="p-4 ml-64 mt-20">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Users</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage your system users</p>
+          <h1 className="text-2xl font-bold text-indigo-900">Users</h1>
+          <p className="text-indigo-600">Manage your system users</p>
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+
+        <button
           onClick={handleOpenModal}
-          className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
-          // disabled={session?.user?.role !== 'admin'}
+          className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+          disabled={session?.user?.role !== 'admin'}
         >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          {session?.user?.role !== 'admin'?'You must be admin to add user' : 'Add New User'}
-        </motion.button>
+          
+          {session?.user?.role !== 'admin' ? 'You must be admin to add user' : <><PlusIcon className="h-5 w-5 mr-2" />
+            Create User</>
+          }
+        </button>
       </div>
 
-      {/* Search and Filter */}
-      <div className="mb-8">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search users..."
-            className="w-full px-4 py-2 pl-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <svg
-            className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search users..."
+          className="w-full px-4 py-2 border border-indigo-200 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+        />
       </div>
 
-      {/* Users Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
-              <div className="h-32 bg-gray-200 dark:bg-gray-700"></div>
-              <div className="p-6">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-                <div className="space-y-3">
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                </div>
-              </div>
-            </div>
+        <div className="animate-pulse">
+          <div className="h-10 bg-indigo-100 rounded mb-4"></div>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-16 bg-indigo-50 rounded mb-2"></div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.map((user: User) => (
-            <UserCard
-              key={user.user_id}
-              user={user}
-              onEdit={handleOpenUpdateModal}
-              onDelete={handleOpenDeleteModal}
-            />
-          ))}
+        <div className="rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-indigo-200">
+            <thead className="bg-indigo-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">User</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">Username</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-indigo-200">
+              {data.map((user: User) => (
+                <tr key={user.user_id} className="hover:bg-indigo-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 flex-shrink-0">
+                        {user.image ? (
+                          <img 
+                            className="h-10 w-10 rounded-full object-cover" 
+                            src={user.image} 
+                            alt={user.full_name}
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <span className="text-indigo-600 text-sm font-medium">
+                              {user.full_name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-indigo-900">{user.full_name}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">@{user.username}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleOpenUpdateModal(user)}
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleOpenDeleteModal(user)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
-      {/* Modals */}
       <ModalCreateUser isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
       <ModalUpdateUser 
         isModalOpen={isUpdateModalOpen} 

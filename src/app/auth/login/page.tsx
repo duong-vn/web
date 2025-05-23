@@ -31,15 +31,12 @@ export default function LoginPage(){
             const res = await signIn("credentials", {
                 email,
                 password,
-                // redirectTo:"/"
                 redirect: false,
             })
-            console.log("res from login", res);
             if (res?.error) {
                 toast.error("Invalid credentials");
             } else {
                 toast.success("Login successful");
-                // Redirect to the home page or any other page
                 window.location.href = "/";
             }
         } catch (error) {
@@ -50,45 +47,44 @@ export default function LoginPage(){
 
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen py-2">
-            <h1 className="text-3xl font-bold">Login</h1>
-            <form className="mt-4 space-y-4 w-full max-w-md"> {/* Added w-full max-w-md */}
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    className="w-full p-2 border border-gray-300 rounded"
-                />
-                <div className="relative w-full">
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded pr-10"
-                    />
-                    <button 
-                        type="button"
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                        onClick={() => setShowPassword(!showPassword)}
-                        tabIndex={-1}
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+            <div className="w-full max-w-md p-6 bg-white border rounded">
+                <h1 className="text-2xl font-bold mb-6 text-center text-black">Login</h1>
+                <form className="space-y-4">
+                    <div>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            className="w-full p-2 border rounded text-black"
+                        />
+                    </div>
+                    <div className="relative">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full p-2 border rounded text-black"
+                        />
+                        <button 
+                            type="button"
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <EyeSlashIcon className="h-5 w-5"/> : <EyeIcon className="h-5 w-5" />}
+                        </button>
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full p-2 bg-blue-500 text-white rounded"
+                        onClick={handleLogin}
                     >
-                        {showPassword ? ( 
-                            <EyeSlashIcon className="h-5 w-5"/>
-                        ) : (
-                            <EyeIcon className="h-5 w-5" />
-                        )}
+                        Login
                     </button>
-                </div>
-                <button
-                    
-                    className="w-full p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-                    onClick={handleLogin}
-                >
-                    Login
-                </button>
-            </form>
+                </form>
+            </div>
         </div>
     );
 }

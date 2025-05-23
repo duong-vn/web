@@ -1,1 +1,2 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+export const USER_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Anonymous_emblem.svg/640px-Anonymous_emblem.svg.png'

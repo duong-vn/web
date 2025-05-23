@@ -34,3 +34,36 @@ interface Group {
   joined_at: Date | null;
 };
 
+interface Post {
+  post_id: number;
+  content: string;
+  created_at: Date;
+  user_id: number;
+  group_id: number;
+  image: string | null;
+
+
+
+}
+interface Comment {
+  comment_id: number;
+  content: string;
+  created_at: Date;
+  user_id: number;
+  post_id: number;
+  image: string | null;
+  username: string;
+
+}
+
+interface EverythingInPost {
+  group_name:string;
+  group_image:string;
+  username: string;
+  post:Post;
+
+
+
+
+}
+

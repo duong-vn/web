@@ -12,72 +12,60 @@ import { group } from 'console';
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 export default function GroupsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { data : groups = [] , isLoading, error } = useSWR('api/groups', fetcher, {
+    const { data: groups = [], isLoading, error } = useSWR('api/groups', fetcher, {
       revalidateOnFocus: false,
       revalidateIfStale: false,
       revalidateOnReconnect: false
     });
+    const { data: session } = useSession();
 
-    const {data:session} = useSession();
-
-
-console.log("check group >>",groups);
-  return (
-    <div className="ml-64 mt-16 p-6 min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Groups</h1>
-          <p className="text-gray-600 dark:text-gray-400">Join communities and connect with others</p>
+    return (
+      <div className="p-4 ml-64 my-20">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-emerald-900">Groups</h1>
+            <p className="text-emerald-600">Join communities and connect with others</p>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors"
+          >
+            <PlusIcon className="h-5 w-5 mr-2" />
+            Create Group
+          </button>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300"
-        >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          Create Group
-        </motion.button>
-      </div>
 
-      {/* Search and Filter */}
-      <div className="mb-8">
-        <div className="relative">
+        <div className="mb-6">
           <input
             type="text"
             placeholder="Search groups..."
-            className="w-full px-4 py-2 pl-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-emerald-200 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
           />
-          <svg
-            className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
         </div>
-      </div>
 
-      {/* Groups Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {groups.map((group : Group) => (
-          <GroupCard key={group.group_id} group={group} />
-        ))}
-      </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white border rounded p-4 animate-pulse">
+                <div className="h-48 bg-emerald-100 rounded mb-4"></div>
+                <div className="h-6 bg-emerald-100 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-emerald-100 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {groups.map((group: Group) => (
+              <GroupCard key={group.group_id} group={group} />
+            ))}
+          </div>
+        )}
 
-     
- 
-        
-      <ModalCreateGroup isModalOpen = {isModalOpen} setIsModalOpen={setIsModalOpen} created_by = {session?.user.user_id || null}/>
-       
-    
-    </div>
-  );
+        <ModalCreateGroup 
+          isModalOpen={isModalOpen} 
+          setIsModalOpen={setIsModalOpen} 
+          created_by={session?.user.user_id || null}
+        />
+      </div>
+    );
 }

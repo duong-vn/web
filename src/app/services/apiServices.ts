@@ -159,6 +159,14 @@ export const deleteComment = async (comment_id : number)=> {
  })
 }
 
+export const getComments = async (post_id: number) => {
+  return fetch(`${API_URL}/comments/all?post_id=${post_id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+}
 
 export { postCreateUser, putUpdateUser, deleteUser,
     

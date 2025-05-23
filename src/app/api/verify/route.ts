@@ -28,12 +28,12 @@ export async function POST(request: NextRequest) {
                         u.password,
                         u.gender,
                         u.image,                      
-                        gm.role
+                        u.role
                         
                     FROM users u
-                    LEFT JOIN group_members gm ON u.user_id = gm.user_id
+                
                     WHERE u.email = ${email}
-                    Order By gm.role ASC
+                    
         
         
         
