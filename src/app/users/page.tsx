@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { PlusIcon } from '@heroicons/react/24/outline';
-import useSWR from 'swr';
-import ModalCreateUser from './ModalCreateUser';
-import ModalUpdateUser from './ModalUpdateUser';
-import ModalDeleteUser from './ModalDeleteUser';
-import { useSession } from 'next-auth/react';
+import { useState } from "react";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import useSWR from "swr";
+import ModalCreateUser from "./ModalCreateUser";
+import ModalUpdateUser from "./ModalUpdateUser";
+import ModalDeleteUser from "./ModalDeleteUser";
+import { useSession } from "next-auth/react";
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function UsersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>();
-  const { data, isLoading, error } = useSWR('/api/users', fetcher, {
+  const { data, isLoading, error } = useSWR("/api/users", fetcher, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
-    revalidateOnReconnect: false
+    revalidateOnReconnect: false,
   });
   const { data: session } = useSession();
 
@@ -36,15 +36,19 @@ export default function UsersPage() {
     setSelectedUser(user);
   };
 
-  if (error) return (
-    <div className="p-4">
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        <strong className="font-bold">Error!</strong>
-        <span className="block sm:inline"> Failed to load users. Please try again later.</span>
+  if (error)
+    return (
+      <div className="p-4">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <strong className="font-bold">Error!</strong>
+          <span className="block sm:inline">
+            {" "}
+            Failed to load users. Please try again later.
+          </span>
+        </div>
       </div>
-    </div>
-  );
-  
+    );
+
   return (
     <div className="p-4 ml-64 mt-20">
       <div className="flex justify-between items-center mb-6">
@@ -53,16 +57,19 @@ export default function UsersPage() {
           <p className="text-indigo-600">Manage your system users</p>
         </div>
 
-
         <button
           onClick={handleOpenModal}
           className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
-          disabled={session?.user?.role !== 'admin'}
+          disabled={session?.user?.role !== "admin"}
         >
-          
-          {session?.user?.role !== 'admin' ? 'You must be admin to add user' : <><PlusIcon className="h-5 w-5 mr-2" />
-            Create User</>
-          }
+          {session?.user?.role !== "admin" ? (
+            "You must be admin to add user"
+          ) : (
+            <>
+              <PlusIcon className="h-5 w-5 mr-2" />
+              Create User
+            </>
+          )}
         </button>
       </div>
 
@@ -86,10 +93,18 @@ export default function UsersPage() {
           <table className="min-w-full divide-y divide-indigo-200">
             <thead className="bg-indigo-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">Username</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">
+                  User
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">
+                  Username
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-indigo-200">
@@ -99,9 +114,9 @@ export default function UsersPage() {
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
                         {user.image ? (
-                          <img 
-                            className="h-10 w-10 rounded-full object-cover" 
-                            src={user.image} 
+                          <img
+                            className="h-10 w-10 rounded-full object-cover"
+                            src={user.image}
                             alt={user.full_name}
                           />
                         ) : (
@@ -113,26 +128,35 @@ export default function UsersPage() {
                         )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-indigo-900">{user.full_name}</div>
+                        <div className="text-sm font-medium text-indigo-900">
+                          {user.full_name}
+                        </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">{user.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">@{user.username}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">
+                    {user.email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">
+                    @{user.username}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleOpenUpdateModal(user)}
                         className="text-indigo-600 hover:text-indigo-900"
                       >
-                        Edit
+                        {session?.user?.role === "admin" ? "Edit" : "View"}
                       </button>
-                      <button
-                        onClick={() => handleOpenDeleteModal(user)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
+
+                      {session?.user?.role === "admin" && (
+                        <button
+                          onClick={() => handleOpenDeleteModal(user)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -142,18 +166,21 @@ export default function UsersPage() {
         </div>
       )}
 
-      <ModalCreateUser isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-      <ModalUpdateUser 
-        isModalOpen={isUpdateModalOpen} 
-        setIsModalOpen={setIsUpdateModalOpen} 
-        user={selectedUser} 
-        setUser={setSelectedUser} 
+      <ModalCreateUser
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
       />
-      <ModalDeleteUser 
-        show={isDeleteModalOpen} 
-        setShow={setIsDeleteModalOpen} 
-        user={selectedUser} 
-        setUser={setSelectedUser} 
+      <ModalUpdateUser
+        isModalOpen={isUpdateModalOpen}
+        setIsModalOpen={setIsUpdateModalOpen}
+        user={selectedUser}
+        setUser={setSelectedUser}
+      />
+      <ModalDeleteUser
+        show={isDeleteModalOpen}
+        setShow={setIsDeleteModalOpen}
+        user={selectedUser}
+        setUser={setSelectedUser}
       />
     </div>
   );

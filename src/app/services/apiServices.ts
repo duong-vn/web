@@ -1,58 +1,73 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
-const postCreateUser = (full_name: string, username: string, email: string, password: string, gender: string, image: string | null) => {
-    return fetch("/api/users", { // Ensure this is your correct API endpoint for creating users
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            full_name,
-            username,
-            email,
-            password,
-            gender,
-            image, // This will be the Base64 string or null
-        }),
-    });
+const postCreateUser = (
+  full_name: string,
+  username: string,
+  email: string,
+  password: string,
+  gender: string,
+  role: string,
+  image: string | null
+) => {
+  return fetch("/api/users", {
+    // Ensure this is your correct API endpoint for creating users
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      full_name,
+      username,
+      email,
+      password,
+      gender,
+      role,
+      image, // This will be the Base64 string or null
+    }),
+  });
 };
 
-const putUpdateUser = (user_id:number,full_name: string, username: string, password: string, gender: string, image: string | null) => {
-return fetch('/api/users', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id,
-          full_name,
-          username,
-          password,
-          gender,
-          image
-         
-        })
-      })
-
-
-
-}
+const putUpdateUser = (
+  user_id: number,
+  full_name: string,
+  username: string,
+  password: string,
+  gender: string,
+  role: string | null,
+  image: string | null
+) => {
+  return fetch("/api/users", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      user_id,
+      full_name,
+      username,
+      password,
+      gender,
+      role,
+      image,
+    }),
+  });
+};
 
 const deleteUser = (user_id: number) => {
-    return fetch(`/api/users`, {
-        method: "DELETE",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            user_id
-        }),
-    });
-}
+  return fetch(`/api/users`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user_id,
+    }),
+  });
+};
 
 export const getUserById = async (id: string) => {
   return fetch(`${API_URL}/users/${id}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 };
@@ -60,42 +75,53 @@ export const getUserById = async (id: string) => {
 // Group Services
 export const getGroups = async () => {
   return fetch(`${API_URL}/groups`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 };
 
 export const getGroupById = async (id: string) => {
   return fetch(`${API_URL}/groups/${id}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 };
 
-export const createGroup = (name: string, description: string,image:string |null, created_by:number | null) => {
+export const createGroup = (
+  name: string,
+  description: string,
+  image: string | null,
+  created_by: number | null,
+  privacy: string
+) => {
   return fetch(`${API_URL}/groups`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      group_name:name,
+      group_name: name,
       description,
       image,
-      created_by
+      created_by,
+      privacy,
     }),
   });
 };
 
-export const updateGroup = (group_id: number, name: string, description: string) => {
+export const updateGroup = (
+  group_id: number,
+  name: string,
+  description: string
+) => {
   return fetch(`${API_URL}/groups`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       group_id,
@@ -107,9 +133,9 @@ export const updateGroup = (group_id: number, name: string, description: string)
 
 export const deleteGroup = (group_id: number) => {
   return fetch(`${API_URL}/groups`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       group_id,
@@ -117,57 +143,56 @@ export const deleteGroup = (group_id: number) => {
   });
 };
 
-export const postLogin = async (email:string ,password:string) => {
-
-    return fetch(`${API_URL}/verify`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            email,
-            password,
-        }),
-    });
-}
-export const deleteReactions = async (reaction_id : number)=> {
-
-  return await fetch(`${API_URL}/reactions`,{
-    method:'DELETE',
-    headers :{
-      'Content-type':'application/json'
+export const postLogin = async (email: string, password: string) => {
+  return fetch(`${API_URL}/verify`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-    body:JSON.stringify({
-      reaction_id
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  });
+};
+export const deleteReactions = async (reaction_id: number) => {
+  return await fetch(`${API_URL}/reactions`, {
+    method: "DELETE",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      reaction_id,
+    }),
+  });
+};
 
-    })
-
-
-  })
-
-}
-
-export const deleteComment = async (comment_id : number)=> {
- return await fetch(`${API_URL}/comments`,{
-  method: 'DELETE',
-  headers:{
-    'Content-type':'application/json'
-  },
-  body: JSON.stringify({
-    comment_id
-  })
- })
-}
+export const deleteComment = async (comment_id: number) => {
+  return await fetch(`${API_URL}/comments`, {
+    method: "DELETE",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      comment_id,
+    }),
+  });
+};
 
 export const getComments = async (post_id: number) => {
   return fetch(`${API_URL}/comments/all?post_id=${post_id}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
-}
-
-export { postCreateUser, putUpdateUser, deleteUser,
-    
- };
+};
+export const getPosts = async () => {
+  return fetch(`${API_URL}/posts`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+export { postCreateUser, putUpdateUser, deleteUser };

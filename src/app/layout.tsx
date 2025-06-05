@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+
 import "./globals.css";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import SessionProvider from "@/components/providers/SessionProviders";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "MyWebsite",
@@ -21,15 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <SessionProvider>
           <div className="min-h-screen bg-gray-50">
             <Header />
             <div className="flex">
               <Sidebar />
-              <main className="flex-1 p-4">
-                {children}
-              </main>
+              <main className="flex-1 p-4">{children}</main>
             </div>
             <ToastContainer />
           </div>

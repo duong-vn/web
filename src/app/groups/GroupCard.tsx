@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import { mutate } from 'swr';
 import { deleteGroup } from '../services/apiServices';
 import ModalDeleteGroup from './ModalDeleteGroup';
+import { MdOutlinePublic } from "react-icons/md";
+import { RiGitRepositoryPrivateFill } from "react-icons/ri";
 
 interface GroupCardProps {
   group: Group;
@@ -65,8 +67,15 @@ const GroupCard = ({ group }: GroupCardProps) => {
         <div className="p-4">
           <h3 className="text-xl font-semibold text-emerald-900 mb-2">
             {group.group_name}
+            {group.privacy === 'private' ? (
+              <RiGitRepositoryPrivateFill className='ml-1 inline' />
+              
+            ) 
+            :
+            (<MdOutlinePublic className='ml-1 inline' />) }
+
           </h3>
-          <p className="text-emerald-600 mb-4 line-clamp-2">
+          <p className="text-emerald-600 mb-4 line-clamp-2 ='inline'">
             {group.description}
           </p>
 

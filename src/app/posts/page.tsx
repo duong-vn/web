@@ -2,41 +2,62 @@
 import useSWR from 'swr';
 import Post from './Post';
 import { PlusIcon } from "@heroicons/react/24/outline";
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-export default function postsPage(){
-    const {data, error} = useSWR('api/posts', fetcher);
-    console.log("posts data",data);
+import { getPosts } from '../services/apiServices';
 
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+export default function PostsPage() {
+    const { data, error, isLoading } = useSWR('/api/posts', fetcher);
+
+    if (isLoading) {
+        return (
+            <div className="p-4 ml-64 mt-20">
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-4 ml-64 mt-20">
+                <div className="text-red-500 text-center">
+                    Đã xảy ra lỗi khi tải bài viết
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className='p-4 ml-64 mt-20'>
-          <div className="flex text-black justify-between">
-        <div>
-            <h1 className="text-2xl font-bold text-indigo-900">
-                Posts
-            </h1>
-            <p>
-                views posts 
-            </p>
+            <div className="flex text-black justify-between mb-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-indigo-900">
+                        Posts
+                    </h1>
+                    <p className="text-gray-600">
+                        Xem bài viết
+                    </p>
+                </div>
+                <div 
+                    className="border-white items-center flex flex-row justify-center cursor-pointer" 
+                    onClick={() => {alert('pressed')}}
+                > 
+                    <span className="flex flex-row bg-blue-300 rounded-lg py-2 px-4 items-center hover:bg-blue-400 transition-colors">
+                        <PlusIcon className="h-5 w-5 mr-2" />
+                        <span className="text-indigo-900">
+                            Tạo bài viết
+                        </span>
+                    </span>
+                </div>
+            </div>
 
+            <div className="space-y-6">
+                {data?.map((post: any) => (
+                    <Post key={post.post_id} post={post} />
+                ))}
+            </div>
         </div>
-       <div className=" border-white bg- items-center flex flex-row justify-center   "  onClick={()=>{alert('pressed')}}> 
-        <span className="flex flex-row bg-blue-300 border-radius rounded-sm py-2 px-2 items-center hover:bg-blue-400 cursor-pointer">
-        <PlusIcon className="h-5 w-5 mr-2" />
-        <span className="text-indigo-900 "  >
-                Create Post
-        </span>
-            </span>
-        </div>
-           
-
-
-        
-
-        </div>
-          <Post />
-        </div>
-    )
-
-
+    );
 }

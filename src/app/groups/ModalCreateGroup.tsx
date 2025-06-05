@@ -16,6 +16,7 @@ const ModalCreateGroup = (props: IProps) => {
   const [description, setDescription] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
+  const [privacy,setPrivacy] = useState<string>('user');
 
   const handleChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target && event.target.files && event.target.files[0]) {
@@ -36,14 +37,15 @@ const ModalCreateGroup = (props: IProps) => {
     setDescription('');
     setImagePreview(null);
     setImage(null);
+    setPrivacy('')
   };
 
   const handleSubmit = async () => {
-    console.log('Submitting form with:', { name, description, image });
+    console.log('Submitting form with:', { name, description, image,privacy });
 
 
     try {
-      const res = await createGroup(name, description,image,created_by);
+      const res = await createGroup(name, description,image,created_by,privacy);
       const data = await res.json();
 
       if (res.ok) {
@@ -90,7 +92,7 @@ const ModalCreateGroup = (props: IProps) => {
                     rows={3}
                   />
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 flex justify-between ">
                   <label 
                     className="cursor-pointer inline-block px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     htmlFor="upload-image"
@@ -104,7 +106,16 @@ const ModalCreateGroup = (props: IProps) => {
                     onChange={handleChangeImage}
                     accept="image/*"
                   />
+                    <select  className = 'inline p-2 text-black focus:ring-indigo-700 border-rounded-sm'
+                        value={privacy}
+                        onChange={(e)=>setPrivacy(e.target.value)}
+                    > 
+                        <option value= ''>Choose Privacy</option>
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                    </select>
                 </div>
+              
               </form>
             </div>
 

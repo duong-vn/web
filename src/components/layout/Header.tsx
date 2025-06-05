@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import { UserCircleIcon, UserGroupIcon, HomeIcon, ArrowRightOnRectangleIcon, UserPlusIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import {
+  UserCircleIcon,
+  UserGroupIcon,
+  HomeIcon,
+  ArrowRightOnRectangleIcon,
+  UserPlusIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 export default function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
-
+  console.log("Session data from header:", session);
   const isActive = (path: string) => pathname === path;
 
   return (
@@ -30,34 +36,34 @@ export default function Header() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/') 
-                  ? 'text-indigo-600 bg-indigo-50' 
-                  : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50'
+                isActive("/")
+                  ? "text-indigo-600 bg-indigo-50"
+                  : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
               }`}
             >
               <HomeIcon className="h-5 w-5" />
               <span>Home</span>
             </Link>
-            <Link 
-              href="/users" 
+            <Link
+              href="/users"
               className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/users') 
-                  ? 'text-indigo-600 bg-indigo-50' 
-                  : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50'
+                isActive("/users")
+                  ? "text-indigo-600 bg-indigo-50"
+                  : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
               }`}
             >
               <UserCircleIcon className="h-5 w-5" />
               <span>Users</span>
             </Link>
-            <Link 
-              href="/groups" 
+            <Link
+              href="/groups"
               className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/groups') 
-                  ? 'text-indigo-600 bg-indigo-50' 
-                  : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50'
+                isActive("/groups")
+                  ? "text-indigo-600 bg-indigo-50"
+                  : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
               }`}
             >
               <UserGroupIcon className="h-5 w-5" />
@@ -73,19 +79,23 @@ export default function Header() {
                   {session.user?.image ? (
                     <img
                       src={session.user.image}
-                      alt={session.user.name || 'User'}
+                      alt={session.user.name || "User"}
                       className="h-8 w-8 rounded-full object-cover border-2 border-indigo-100"
                     />
                   ) : (
                     <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
                       <span className="text-indigo-600 font-medium">
-                        {session.user?.name?.charAt(0) || 'U'}
+                        {session.user?.name?.charAt(0) || "U"}
                       </span>
                     </div>
                   )}
                   <div className="hidden md:block">
-                    <p className="text-sm font-medium text-gray-900">{session.user?.name}</p>
-                    <p className="text-xs text-gray-500">{session.user?.email}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {session.user?.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {session.user?.email}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -119,4 +129,4 @@ export default function Header() {
       </div>
     </header>
   );
-} 
+}

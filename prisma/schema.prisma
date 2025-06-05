@@ -33,8 +33,8 @@ model groups {
   group_name        String          @db.NVarChar(255)
   created_by        Int?
   privacy           String?          @db.VarChar(10)
-  image             String?         @db.Text
-  description       String?         @db.Text
+  image             String?         @db.NVarChar(Max)
+  description       String?         @db.NVarChar(Max)
   number_of_posts   Int?            @default(1, map: "DF__groups__number_o__145C0A3F")
   number_of_members Int?            @default(1, map: "DF__groups__number_o__15502E78")
   created_at        DateTime?       @default(now(), map: "DF__groups__created___164452B1") @db.DateTime
@@ -45,10 +45,10 @@ model groups {
 
 model posts {
   post_id    Int         @id(map: "PK__posts__3ED787665E7D32AB") @default(autoincrement())
-  content    String      @db.Text
+  content    String      @db.NVarChar(Max)
   user_id    Int?
   group_id   Int?
-  image       String?     @db.Text
+  image       String?     @db.NVarChar(Max)
   created_at DateTime?   @default(now(), map: "DF__posts__created_a__1ED998B2") @db.DateTime
   comments   comments[]
   groups     groups?     @relation(fields: [group_id], references: [group_id], onDelete: NoAction, onUpdate: NoAction, map: "FK__posts__group_id__20C1E124")
@@ -84,7 +84,7 @@ model users {
   full_name     String          @db.NVarChar(255)
   username      String          @db.NVarChar(255)
   password      String
-  image         String?         @db.Text
+  image         String?         @db.NVarChar(Max)
   role          String?         @db.NVarChar(10)
   gender        String?         @db.NVarChar(10)
   created_at    DateTime?       @default(now(), map: "DF__users__created_a__117F9D94") @db.DateTime

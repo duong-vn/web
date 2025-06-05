@@ -5,16 +5,39 @@ import { prisma } from '@/lib/prisma';
 export async function GET() {
   try {
     const groups = await prisma.$queryRaw`
-      Select *
-      from groups
-      Order by group_id DESC
+     SELECT 
+    g.group_id,
+    g.group_name,
+    g.created_by,
+    g.privacy,
+    g.image,
+    g.description,
+    g.number_of_posts,
+    g.number_of_members,
+    g.created_at,
+    COUNT(DISTINCT gm.user_id) AS number_of_members,
+    COUNT(DISTINCT p.post_id) AS number_of_posts
+FROM groups g
+LEFT JOIN group_members gm ON g.group_id = gm.group_id
+LEFT JOIN posts p ON g.group_id = p.group_id
+GROUP BY 
+    g.group_id,
+    g.group_name,
+    g.created_by,
+    g.privacy,
+    g.image,
+    g.description,
+    g.number_of_posts,
+    g.number_of_members,
+    g.created_at
+ORDER BY g.group_id DESC;
     
     `
     
     return NextResponse.json(groups);
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error fetching groups' },
+      { message: 'Error fetching groups',error },
       { status: 500 }
     );
   }
@@ -24,7 +47,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { group_name , created_by,description } = body;
+    const { group_name , created_by,description,privacy } = body;
     const {image} = body ?? null;
 
     console.log("create group data from server side",body);
@@ -38,9 +61,9 @@ export async function POST(request: Request) {
     }
 
     const groups = await prisma.$queryRaw<Group[]>`
-    INSERT INTO groups (group_name, description, created_by,image,number_of_members)
+    INSERT INTO groups (group_name, description, created_by,image,number_of_members,privacy)
     OUTPUT inserted.*
-    VALUES (${body.group_name}, ${description}, ${created_by}, ${image??''},1);
+    VALUES (${body.group_name}, ${description}, ${created_by}, ${image??''},1,${privacy});
   `;
   // var groups : Group[] = [];
   // if(image){  
@@ -63,8 +86,8 @@ export async function POST(request: Request) {
     // Add creator as a member with 'admin' role
     if (created_by) {
       await prisma.$executeRaw`
-      INSERT INTO group_members(user_id,group_id,role) VALUES
-      (${created_by},${group.group_id},'admin');`
+      INSERT INTO group_members(user_id,group_id) VALUES
+      (${created_by},${group.group_id});`
     }
 
     return NextResponse.json(
