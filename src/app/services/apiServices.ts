@@ -82,15 +82,6 @@ export const getGroups = async () => {
   });
 };
 
-export const getGroupById = async (id: string) => {
-  return fetch(`${API_URL}/groups/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
-
 export const createGroup = (
   name: string,
   description: string,
@@ -128,6 +119,14 @@ export const updateGroup = (
       name,
       description,
     }),
+  });
+};
+export const getGroupById = async (user_id: number) => {
+  return fetch(`${API_URL}/groups?user_id=${user_id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 

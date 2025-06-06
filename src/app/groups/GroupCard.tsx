@@ -1,45 +1,89 @@
-'use client';
+"use client";
 
-import { UserGroupIcon, DocumentTextIcon, CalendarIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { toast } from 'react-toastify';
-import { mutate } from 'swr';
-import { deleteGroup } from '../services/apiServices';
-import ModalDeleteGroup from './ModalDeleteGroup';
+import {
+  UserGroupIcon,
+  DocumentTextIcon,
+  CalendarIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { use, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
+import { mutate } from "swr";
+import { deleteGroup, getGroupById } from "../services/apiServices";
+import ModalDeleteGroup from "./ModalDeleteGroup";
 import { MdOutlinePublic } from "react-icons/md";
 import { RiGitRepositoryPrivateFill } from "react-icons/ri";
 
 interface GroupCardProps {
   group: Group;
+  handleJoinGroup: (groupId: string) => void;
 }
 
 const GroupCard = ({ group }: GroupCardProps) => {
   const { data: session } = useSession();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const isAdmin = group.created_by === session?.user?.user_id;
-
+  const [joinedGroup, setJoinedGroup] = useState<[]>([]);
+  const [groupSet, setGroupSet] = useState<Set<number>>(new Set());
   const handleDelete = async () => {
     try {
       const res = await deleteGroup(group.group_id);
       const data = await res.json();
 
       if (res.ok) {
-        mutate('api/groups');
-        toast.success('Group deleted successfully');
+        mutate("api/groups");
+        toast.success("Group deleted successfully");
         setShowDeleteModal(false);
       } else {
-        toast.error(data.message || 'Error deleting group');
+        toast.error(data.message || "Error deleting group");
       }
     } catch (error) {
-      console.error('Error deleting group:', error);
-      toast.error('Error deleting group');
+      console.error("Error deleting group:", error);
+      toast.error("Error deleting group");
     }
+  };
+  useEffect(() => {
+    const getJoinedGroup = async () => {
+      const res = await getGroupById(session?.user?.user_id || 0);
+      // const res = await getGroupById(3);
+
+      const data = await res.json();
+      console.log("joined group data>>", data);
+      setJoinedGroup(data);
+      console.log("joined group>> be4", joinedGroup);
+    };
+
+    getJoinedGroup();
+  }, []);
+
+  useEffect(() => {
+    console.log("joined group>> now", joinedGroup);
+
+    if (joinedGroup.length > 0) {
+      // Cập nhật state groupSet
+      setGroupSet(new Set(joinedGroup.map((g: any) => g.group_id)));
+    }
+
+    console.log("joined group set>>", groupSet);
+  }, [joinedGroup]);
+
+  const handleClickGroup = () => {
+    console.log("Group clicked:", group.group_id);
+    // Navigate to group details page or perform any other action
+  };
+  const handleJoinGroup = () => {
+    console.log(
+      `Joining group with ID: ${group.group_id} by user ${session?.user?.user_id}`
+    );
   };
 
   return (
     <>
-      <div className="bg-white border rounded-lg overflow-hidden hover:border-emerald-500 transition-colors">
+      <div
+        className="bg-white border rounded-lg overflow-hidden hover:border-emerald-500 transition-colors"
+        onClick={handleClickGroup}
+      >
         {/* Group Image */}
         <div className="h-48 bg-emerald-100 relative">
           {group.image ? (
@@ -67,13 +111,11 @@ const GroupCard = ({ group }: GroupCardProps) => {
         <div className="p-4">
           <h3 className="text-xl font-semibold text-emerald-900 mb-2">
             {group.group_name}
-            {group.privacy === 'private' ? (
-              <RiGitRepositoryPrivateFill className='ml-1 inline' />
-              
-            ) 
-            :
-            (<MdOutlinePublic className='ml-1 inline' />) }
-
+            {group.privacy === "private" ? (
+              <RiGitRepositoryPrivateFill className="ml-1 inline" />
+            ) : (
+              <MdOutlinePublic className="ml-1 inline" />
+            )}
           </h3>
           <p className="text-emerald-600 mb-4 line-clamp-2 ='inline'">
             {group.description}
@@ -86,34 +128,33 @@ const GroupCard = ({ group }: GroupCardProps) => {
               <span className="text-sm font-medium text-emerald-900">
                 {group.number_of_members}
               </span>
-              <span className="text-xs text-emerald-600">
-                Members
-              </span>
+              <span className="text-xs text-emerald-600">Members</span>
             </div>
             <div className="flex flex-col items-center">
               <DocumentTextIcon className="h-5 w-5 text-emerald-500 mb-1" />
               <span className="text-sm font-medium text-emerald-900">
                 {group.number_of_posts}
               </span>
-              <span className="text-xs text-emerald-600">
-                Posts
-              </span>
+              <span className="text-xs text-emerald-600">Posts</span>
             </div>
             <div className="flex flex-col items-center">
               <CalendarIcon className="h-5 w-5 text-emerald-500 mb-1" />
               <span className="text-sm font-medium text-emerald-900">
                 {new Date(group.created_at).toLocaleDateString()}
               </span>
-              <span className="text-xs text-emerald-600">
-                Created
-              </span>
+              <span className="text-xs text-emerald-600">Created</span>
             </div>
           </div>
 
           {/* Action Button */}
-          <button className="w-full py-2 px-4 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors">
-            Join Group
-          </button>
+          {!groupSet.has(group.group_id) && (
+            <button
+              className="w-full py-2 px-4 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors"
+              onClick={handleJoinGroup}
+            >
+              Join Group
+            </button>
+          )}
         </div>
       </div>
 
@@ -127,4 +168,4 @@ const GroupCard = ({ group }: GroupCardProps) => {
   );
 };
 
-export default GroupCard; 
+export default GroupCard;

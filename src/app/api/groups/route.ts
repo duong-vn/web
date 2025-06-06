@@ -1,10 +1,15 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 // GET all groups
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const user_id = searchParams.get("user_id");
+  console.log("user_id from query params", user_id);
+
   try {
-    const groups = await prisma.$queryRaw`
+    if (!user_id) {
+      const groups = await prisma.$queryRaw`
      SELECT 
     g.group_id,
     g.group_name,
@@ -12,11 +17,10 @@ export async function GET() {
     g.privacy,
     g.image,
     g.description,
-    g.number_of_posts,
-    g.number_of_members,
     g.created_at,
     COUNT(DISTINCT gm.user_id) AS number_of_members,
     COUNT(DISTINCT p.post_id) AS number_of_posts
+  
 FROM groups g
 LEFT JOIN group_members gm ON g.group_id = gm.group_id
 LEFT JOIN posts p ON g.group_id = p.group_id
@@ -31,13 +35,34 @@ GROUP BY
     g.number_of_members,
     g.created_at
 ORDER BY g.group_id DESC;
+
+    `;
+
+      return NextResponse.json(groups);
+    } else {
+      const groups = await prisma.$queryRaw`
+     SELECT 
+    g.group_id
+  
+FROM groups g
+LEFT JOIN group_members gm ON g.group_id = gm.group_id
+LEFT JOIN posts p ON g.group_id = p.group_id
+
+WHERE g.group_id IN (
+    SELECT group_id FROM group_members WHERE user_id = ${user_id}
+  )
+  GROUP BY 
+    g.group_id
     
-    `
-    
-    return NextResponse.json(groups);
+
+
+    `;
+
+      return NextResponse.json(groups);
+    }
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error fetching groups',error },
+      { message: "Error fetching groups", error },
       { status: 500 }
     );
   }
@@ -47,15 +72,15 @@ ORDER BY g.group_id DESC;
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { group_name , created_by,description,privacy } = body;
-    const {image} = body ?? null;
+    const { group_name, created_by, description, privacy } = body;
+    const { image } = body ?? null;
 
-    console.log("create group data from server side",body);
-    console.log("image from server side",image, typeof null);
-    
+    console.log("create group data from server side", body);
+    console.log("image from server side", image, typeof null);
+
     if (!group_name) {
       return NextResponse.json(
-        { message: 'Group name is required' },
+        { message: "Group name is required" },
         { status: 400 }
       );
     }
@@ -63,40 +88,41 @@ export async function POST(request: Request) {
     const groups = await prisma.$queryRaw<Group[]>`
     INSERT INTO groups (group_name, description, created_by,image,number_of_members,privacy)
     OUTPUT inserted.*
-    VALUES (${body.group_name}, ${description}, ${created_by}, ${image??''},1,${privacy});
+    VALUES (${body.group_name}, ${description}, ${created_by}, ${
+      image ?? ""
+    },1,${privacy});
   `;
-  // var groups : Group[] = [];
-  // if(image){  
-  //    groups = await prisma.$queryRaw<Group[]>`
-  //   INSERT INTO groups (group_name, description, created_by,image,number_of_members)
-  //   OUTPUT inserted.*
-  //   VALUES (${body.group_name}, ${description}, ${created_by}, ${image },1);
-    
-  // `;}else{
-  //    groups = await prisma.$queryRaw<Group[]>`
-  //   INSERT INTO groups (group_name, description, created_by,image,number_of_members)
-  //   OUTPUT inserted.*
-  //   VALUES (${body.group_name}, ${description}, ${created_by}, null,1);
-  //   `
-  // }
-	const group = groups[0];
-    
-    
-    console.log("created group?>>",group);
+    // var groups : Group[] = [];
+    // if(image){
+    //    groups = await prisma.$queryRaw<Group[]>`
+    //   INSERT INTO groups (group_name, description, created_by,image,number_of_members)
+    //   OUTPUT inserted.*
+    //   VALUES (${body.group_name}, ${description}, ${created_by}, ${image },1);
+
+    // `;}else{
+    //    groups = await prisma.$queryRaw<Group[]>`
+    //   INSERT INTO groups (group_name, description, created_by,image,number_of_members)
+    //   OUTPUT inserted.*
+    //   VALUES (${body.group_name}, ${description}, ${created_by}, null,1);
+    //   `
+    // }
+    const group = groups[0];
+
+    console.log("created group?>>", group);
     // Add creator as a member with 'admin' role
     if (created_by) {
       await prisma.$executeRaw`
       INSERT INTO group_members(user_id,group_id) VALUES
-      (${created_by},${group.group_id});`
+      (${created_by},${group.group_id});`;
     }
 
     return NextResponse.json(
-      { message: 'Group created successfully', group },
+      { message: "Group created successfully", group },
       { status: 201 }
     );
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error creating group', error },
+      { message: "Error creating group", error },
       { status: 500 }
     );
   }
@@ -110,7 +136,7 @@ export async function PUT(request: Request) {
 
     if (!group_id || !group_name) {
       return NextResponse.json(
-        { message: 'Group ID and name are required' },
+        { message: "Group ID and name are required" },
         { status: 400 }
       );
     }
@@ -126,12 +152,12 @@ export async function PUT(request: Request) {
     });
 
     return NextResponse.json(
-      { message: 'Group updated successfully', group: updatedGroup },
+      { message: "Group updated successfully", group: updatedGroup },
       { status: 200 }
     );
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error updating group' },
+      { message: "Error updating group" },
       { status: 500 }
     );
   }
@@ -145,7 +171,7 @@ export async function DELETE(request: Request) {
 
     if (!group_id) {
       return NextResponse.json(
-        { message: 'Group ID is required' },
+        { message: "Group ID is required" },
         { status: 400 }
       );
     }
@@ -183,20 +209,18 @@ DELETE FROM posts WHERE group_id = @group_id;
 
 -- Xóa nhóm
 DELETE FROM groups WHERE group_id = @group_id;
-    `
+    `;
 
     return NextResponse.json(
-      { message: 'Group deleted successfully' },
+      { message: "Group deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Delete group error:', error);
+    console.error("Delete group error:", error);
     return NextResponse.json(
-      { message: 'Error deleting group',
-        error
-       },
+      { message: "Error deleting group", error },
 
       { status: 500 }
     );
   }
-} 
+}
