@@ -1,5 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+
+
+
 
 // GET reactions for a post or comment
 export async function GET(request: Request) {
@@ -17,26 +20,28 @@ export async function GET(request: Request) {
 
     let reactions;
     if (post_id) {
-      reactions = await prisma.$queryRaw`
+      reactions= await prisma.$queryRaw<any>`
         SELECT 
-         
+         COUNT(reaction_id) as likeCount
+         FROM 
+         reactions r
+         Where post_id = ${post_id}
       `;
+      console.log("reaction from post_id ",reactions)
+      const reaction = reactions[0];
+     
+      return NextResponse.json(reaction);
     } else {
-      reactions = await prisma.$queryRaw`
+      reactions = await prisma.$queryRaw<any>`
         SELECT 
-          r.reaction_id,
-          r.type,
-          r.created_at,
-          r.user_id,
-          r.comment_id,
-          u.username,
-          u.full_name,
-          u.image as user_image
-        FROM reactions r
-        LEFT JOIN users u ON r.user_id = u.user_id
-        WHERE r.comment_id = ${comment_id}
-        ORDER BY r.created_at DESC
+         COUNT(reaction_id) as likeCount
+         FROM 
+         reactions r
+         Where comment_id = ${comment_id}
+     
       `;
+      const reaction = reactions[0];
+      return NextResponse.json(reaction);
     }
 
     return NextResponse.json(reactions);
@@ -52,43 +57,54 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { type, user_id, post_id, comment_id } = body;
+    const {user_id} = body;
+    const {searchParams} = new URL(request.url)
+    
+    const post_id = searchParams.get('post_id');
+    const comment_id = searchParams.get('comment_id');
 
-    if (!type || !user_id || (!post_id && !comment_id)) {
+    if ( !user_id) {
       return NextResponse.json(
-        { message: 'Type, user ID, and either post ID or comment ID are required' },
+        { message: 'You need to login to react' },
+        { status: 400 }
+      );
+    }
+    if (!post_id && !comment_id) {
+      return NextResponse.json(
+        { message: 'No post or comment' },
         { status: 400 }
       );
     }
 
     // Check if reaction already exists
-    const existingReaction = await prisma.$queryRaw`
-      SELECT reaction_id FROM reactions 
-      WHERE user_id = ${user_id} 
-      AND (${post_id ? `post_id = ${post_id}` : 'post_id IS NULL'})
-      AND (${comment_id ? `comment_id = ${comment_id}` : 'comment_id IS NULL'})
-    `;
+    if ( post_id){
 
-    if (existingReaction) {
+     await prisma.$queryRaw`
+      INSERT INTO reactions (user_id, post_id)
+      VALUES (${user_id}, ${post_id})
+     
+    `;
+    return NextResponse.json(
+      { message: 'Reaction created successfully' },
+      { status: 201 })
+    
+    }else {
+      await prisma.$queryRaw`
+      INSERT INTO reactions (user_id, comment_id)
+      VALUES (${user_id},  ${comment_id})
+     `
+
       return NextResponse.json(
-        { message: 'Reaction already exists' },
-        { status: 400 }
-      );
+        { message: 'Reaction created successfully', },
+        { status: 201 })
+      
     }
 
-    const reaction = await prisma.$queryRaw`
-      INSERT INTO reactions (type, user_id, post_id, comment_id, created_at)
-      VALUES (${type}, ${user_id}, ${post_id}, ${comment_id}, NOW())
-      RETURNING *
-    `;
-
-    return NextResponse.json(
-      { message: 'Reaction created successfully', reaction },
-      { status: 201 }
-    );
+    
+    ;
   } catch (error) {
     return NextResponse.json(
-      { message: 'Error creating reaction' },
+      { message: 'Error creating reaction', error },
       { status: 500 }
     );
   }

@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  //   /* config options here */
   webpack: (config) => {
     config.module.rules.push({
       test: /\.css$/,
@@ -8,10 +8,11 @@ const nextConfig = {
     });
     return config;
   },
-  // api: {
-  //   bodyParser: {
-  //     sizeLimit: '10mb', // tăng giới hạn lên 10mb (bạn có thể chỉnh lên tùy ý)
-  //   },}
+  //   api: {
+  //     bodyParser: {
+  //       sizeLimit: "8mb",
+  //     },
+  //   },
 };
 
 module.exports = nextConfig;

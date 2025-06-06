@@ -107,7 +107,7 @@ export default function UsersPage() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-indigo-200">
+            <tbody className="bg-white divide-y divide-indigo-200 max-h-75 overflow-y-auto">
               {data.map((user: User) => (
                 <tr key={user.user_id} className="hover:bg-indigo-50">
                   <td className="px-6 py-4 whitespace-nowrap">
