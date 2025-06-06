@@ -156,14 +156,15 @@ export const postLogin = async (email: string, password: string) => {
     }),
   });
 };
-export const deleteReactions = async (reaction_id: number) => {
+export const deleteReaction = async (user_id : number , post_id : number) => {
   return await fetch(`${API_URL}/reactions`, {
     method: "DELETE",
     headers: {
       "Content-type": "application/json",
     },
     body: JSON.stringify({
-      reaction_id,
+      user_id,
+      post_id
     }),
   });
 };
@@ -239,6 +240,16 @@ export const postCreateReactionByPostId = async ( user_id: number,post_id:number
     body: JSON.stringify({
       user_id
     })
+  })
+}
+
+export const postJoinGroup = (user_id: number,group_id:number) => {
+  return fetch(`${API_URL}/groups/join?user_id=${user_id}&&group_id=${group_id}`,{
+    method : "POST",
+    headers : {
+      "Content-Type": "application/json",
+    }
+   
   })
 }
 

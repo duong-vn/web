@@ -5,8 +5,12 @@ import { useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import GroupCard from "./GroupCard";
 import useSWR from "swr";
+import { mutate } from "swr";
 import { useSession } from "next-auth/react";
 import ModalCreateGroup from "./ModalCreateGroup";
+import { postJoinGroup } from "../services/apiServices";
+import { toast } from "react-toastify";
+import { group } from "console";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function GroupsPage() {
@@ -23,10 +27,25 @@ export default function GroupsPage() {
 
   const { data: session } = useSession();
 
-  const handleJoinGroup = (groupId: string) => {
-    console.log(
-      `Joining group with ID: ${groupId} by user ${session?.user.user_id}`
-    );
+  const handleJoinGroup = async (groupId: number) => {
+    if (!session?.user.user_id) {
+      toast.error("Please login to join group");
+      return;
+    }
+    try {
+      const user_id = session.user.user_id;
+      console.log("joining with", user_id, groupId)
+      const res = await postJoinGroup(user_id, groupId);
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message);
+      }
+    } catch (error) {
+      toast.error("Error joining group");
+      console.log("error joining", error);
+    }
+
+    mutate('api/groups')
   };
 
   return (

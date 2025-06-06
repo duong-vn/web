@@ -17,10 +17,10 @@ import { RiGitRepositoryPrivateFill } from "react-icons/ri";
 
 interface GroupCardProps {
   group: Group;
-  handleJoinGroup: (groupId: string) => void;
+  handleJoinGroup: (groupId: number) => void;
 }
 
-const GroupCard = ({ group }: GroupCardProps) => {
+const GroupCard = ({ group, handleJoinGroup }: GroupCardProps) => {
   const { data: session } = useSession();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const isAdmin = group.created_by === session?.user?.user_id;
@@ -55,7 +55,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
     };
 
     getJoinedGroup();
-  }, []);
+  }, [session]);
 
   useEffect(() => {
     console.log("joined group>> now", joinedGroup);
@@ -72,11 +72,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
     console.log("Group clicked:", group.group_id);
     // Navigate to group details page or perform any other action
   };
-  const handleJoinGroup = () => {
-    console.log(
-      `Joining group with ID: ${group.group_id} by user ${session?.user?.user_id}`
-    );
-  };
+ 
 
   return (
     <>
@@ -150,7 +146,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
           {!groupSet.has(group.group_id) && (
             <button
               className="w-full py-2 px-4 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors"
-              onClick={handleJoinGroup}
+              onClick={() => handleJoinGroup(group.group_id)}
             >
               Join Group
             </button>

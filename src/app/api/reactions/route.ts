@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
+    
     const post_id = searchParams.get('post_id');
     const comment_id = searchParams.get('comment_id');
 
@@ -114,26 +115,17 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const body = await request.json();
-    const { reaction_id } = body;
+    const { user_id, post_id } = body;
 
-    if (!reaction_id) {
-      return NextResponse.json(
-        { message: 'Reaction ID is required' },
-        { status: 400 }
-      );
-    }
+   
 
-    const result = await prisma.$queryRaw`
-      DELETE FROM reactions WHERE reaction_id = ${reaction_id}
-      RETURNING reaction_id
+     await prisma.$queryRaw`
+      DELETE FROM reactions WHERE post_id = ${post_id} AND user_id = ${user_id};
+      
     `;
 
-    if (!result) {
-      return NextResponse.json(
-        { message: 'Reaction not found' },
-        { status: 404 }
-      );
-    }
+    
+    
 
     return NextResponse.json(
       { message: 'Reaction deleted successfully' }
