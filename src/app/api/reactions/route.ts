@@ -19,18 +19,7 @@ export async function GET(request: Request) {
     if (post_id) {
       reactions = await prisma.$queryRaw`
         SELECT 
-          r.reaction_id,
-          r.type,
-          r.created_at,
-          r.user_id,
-          r.post_id,
-          u.username,
-          u.full_name,
-          u.image as user_image
-        FROM reactions r
-        LEFT JOIN users u ON r.user_id = u.user_id
-        WHERE r.post_id = ${post_id}
-        ORDER BY r.created_at DESC
+         
       `;
     } else {
       reactions = await prisma.$queryRaw`

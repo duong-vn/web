@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import Credentials from "next-auth/providers/credentials"
 import { postLogin } from './app/services/apiServices';
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
@@ -86,5 +86,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: "/auth/error",
   },
   debug: true, // Thêm debug để xem lỗi chi tiết hơn
-})
+};
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
   

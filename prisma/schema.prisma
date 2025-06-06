@@ -30,7 +30,7 @@ model group_members {
 
 model groups {
   group_id          Int             @id(map: "PK__groups__D57795A04E0C402C") @default(autoincrement())
-  group_name        String          @db.NVarChar(255)
+  group_name        String          @unique @db.NVarChar(255)
   created_by        Int?
   privacy           String?          @db.VarChar(10)
   image             String?         @db.NVarChar(Max)
@@ -82,7 +82,7 @@ model users {
   user_id       Int             @id(map: "PK__users__B9BE370F4ADB77BF") @default(autoincrement())
   email         String          @unique(map: "UQ__users__AB6E6164ECD4F32E") @db.NVarChar(255)
   full_name     String          @db.NVarChar(255)
-  username      String          @db.NVarChar(255)
+  username      String          @unique @db.NVarChar(255)
   password      String
   image         String?         @db.NVarChar(Max)
   role          String?         @db.NVarChar(10)

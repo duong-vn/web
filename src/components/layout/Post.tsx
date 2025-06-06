@@ -33,12 +33,27 @@ const Post = ({ post, curUser }: PostProps) => {
   const [likeCount, setLikeCount] = useState(0);
 
   const handleLike = async () => {
+    try {
+      const response = await fetch('/api/reactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'like',
+          user_id: curUser,
+          post_id: data.post_id,
+        }),
+      });
 
-    alert('liked')
-  }
-   
-
-     
+      if (response.ok) {
+        setIsLiked(!isLiked);
+        setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden mb-6">
@@ -97,12 +112,12 @@ const Post = ({ post, curUser }: PostProps) => {
           <div className="flex flex-row items-center gap-2"> 
             <button
               onClick={handleLike}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-pink-500 transition-colors"
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-pink-500 transition-colors duration-200 ease-in-out"
             >
               {isLiked ? (
-                <HeartSolid className="h-6 w-6 text-pink-500" />
+                <HeartSolid className="h-6 w-6 text-pink-500 transform scale-110 transition-transform duration-200" />
               ) : (
-                <HeartOutline className="h-6 w-6" />
+                <HeartOutline className="h-6 w-6 hover:scale-110 transition-transform duration-200" />
               )}
               <span className="font-medium">{likeCount}</span>
             </button>
@@ -110,16 +125,14 @@ const Post = ({ post, curUser }: PostProps) => {
           
           <button
             onClick={() => setShowComment(!showComment)}
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-500 transition-colors duration-200 ease-in-out"
           >
-            <ChatBubbleLeftIcon className="h-6 w-6" />
+            <ChatBubbleLeftIcon className="h-6 w-6 hover:scale-110 transition-transform duration-200" />
             <span className="font-medium">Comment</span>
           </button>
         </div>
           
-            <Comments post_id={data.post_id} curUser={curUser} showComment={showComment} />
-         
-         
+        <Comments post_id={data.post_id} curUser={curUser} showComment={showComment} />
       </div>
     </div>
   );
