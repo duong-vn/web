@@ -1,6 +1,6 @@
 "use client";
 import useSWR from "swr";
-import Post from "./Post";
+import Post from "../../components/layout/Post";
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { getPosts } from "../services/apiServices";
