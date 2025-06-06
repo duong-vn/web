@@ -62,6 +62,6 @@ interface EverythingInPost {
   content: string;
   created_at: string;
   image: string | null;
-
+  user_image: string | null;
   privacy: string;
 }

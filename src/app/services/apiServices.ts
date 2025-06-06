@@ -1,3 +1,5 @@
+import { use } from "react";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
 const postCreateUser = (
@@ -162,6 +164,23 @@ export const deleteReactions = async (reaction_id: number) => {
     },
     body: JSON.stringify({
       reaction_id,
+    }),
+  });
+};
+export const postCreateComment = async (
+  post_id: number,
+  user_id: number,
+  content: string
+) => {
+  return await fetch(`${API_URL}/comments`, {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({
+      post_id,
+      user_id,
+      content,
     }),
   });
 };
