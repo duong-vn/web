@@ -21,13 +21,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <SessionProvider>
-          <div className="min-h-screen bg-gray-50">
+          <div className="min-h-screen bg-gray-900">
             <Header />
             <div className="flex">
               <Sidebar />
-              <main className="flex-1 p-4">{children}</main>
+              <main className="flex-1 p-4 text-gray-100">{children}</main>
             </div>
-            <ToastContainer />
+            <ToastContainer theme="dark" />
           </div>
         </SessionProvider>
       </body>

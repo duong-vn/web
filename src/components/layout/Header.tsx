@@ -15,20 +15,19 @@ import { signOut } from "next-auth/react";
 export default function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
-  console.log("Session data from header:", session);
   const isActive = (path: string) => pathname === path;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 group">
-              <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center transform transition-transform group-hover:scale-110 group-hover:rotate-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center transform transition-transform group-hover:scale-110 group-hover:rotate-3">
                 <span className="text-white font-bold text-xl">S</span>
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent group-hover:from-indigo-500 group-hover:to-purple-500 transition-all">
+              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent group-hover:from-indigo-300 group-hover:to-purple-300 transition-all">
                 SocialHub
               </span>
             </Link>
@@ -40,8 +39,8 @@ export default function Header() {
               href="/"
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive("/")
-                  ? "text-indigo-600 bg-indigo-50 shadow-sm"
-                  : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-sm"
+                  ? "text-indigo-400 bg-gray-800 shadow-sm"
+                  : "text-gray-400 hover:text-indigo-400 hover:bg-gray-800 hover:shadow-sm"
               }`}
             >
               <HomeIcon className="h-5 w-5" />
@@ -51,8 +50,8 @@ export default function Header() {
               href="/users"
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive("/users")
-                  ? "text-indigo-600 bg-indigo-50 shadow-sm"
-                  : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-sm"
+                  ? "text-indigo-400 bg-gray-800 shadow-sm"
+                  : "text-gray-400 hover:text-indigo-400 hover:bg-gray-800 hover:shadow-sm"
               }`}
             >
               <UserCircleIcon className="h-5 w-5" />
@@ -62,8 +61,8 @@ export default function Header() {
               href="/groups"
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive("/groups")
-                  ? "text-indigo-600 bg-indigo-50 shadow-sm"
-                  : "text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 hover:shadow-sm"
+                  ? "text-indigo-400 bg-gray-800 shadow-sm"
+                  : "text-gray-400 hover:text-indigo-400 hover:bg-gray-800 hover:shadow-sm"
               }`}
             >
               <UserGroupIcon className="h-5 w-5" />
@@ -77,14 +76,14 @@ export default function Header() {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <div className="hidden md:block">
-                    <p className="text-sm font-medium bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    <p className="text-sm font-medium bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                       Hello, {session.user?.username}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => signOut()}
-                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 hover:shadow-sm"
+                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-gray-800 rounded-lg transition-all duration-200 hover:shadow-sm"
                 >
                   <ArrowRightOnRectangleIcon className="h-5 w-5" />
                   <span className="hidden md:inline">Sign Out</span>
@@ -94,7 +93,7 @@ export default function Header() {
               <div className="flex items-center space-x-3">
                 <Link
                   href="/auth/login"
-                  className="flex items-center space-x-2 px-4 py-2 text-indigo-600 border border-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-200 hover:shadow-sm"
+                  className="flex items-center space-x-2 px-4 py-2 text-indigo-400 border border-indigo-600 rounded-lg hover:bg-gray-800 transition-all duration-200 hover:shadow-sm"
                 >
                   <ArrowRightOnRectangleIcon className="h-5 w-5" />
                   <span>Sign In</span>
