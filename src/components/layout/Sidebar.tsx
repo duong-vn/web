@@ -126,12 +126,12 @@ const Sidebar = () => {
             <div className="flex items-center space-x-3 bg-gray-800 p-3 rounded-lg cursor-pointer hover:bg-gray-900" 
             onClick={()=>router.push('/users/update-user')}>
               <div className="relative h-8 w-8 rounded-full overflow-hidden">
-                <Image
+                {/* <Image
                   src={session.user?.image || USER_IMAGE}
                   alt={session.user?.username || 'User'}
                   fill
                   className="object-cover"
-                />
+                /> */}
               </div>
               {!isCollapsed && (
                 <div className="flex-1 min-w-0">
