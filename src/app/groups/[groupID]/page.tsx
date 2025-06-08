@@ -1,5 +1,5 @@
 'use client'
-import { getGroupByGroupId } from "@/app/services/apiServices";
+import { getGroupByGroupId, isJoinedGroup } from "@/app/services/apiServices";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from 'react-toastify';
@@ -11,6 +11,10 @@ import Loading from "@/components/layout/Loading";
 import ButtonModalCreatePost from "@/components/layout/ButtonModalCreatePost";
 import { fetcher } from "@/app/utils/fetcher";
 import useSWR from "swr";
+import { leaveGroup } from '@/app/services/apiServices';
+import ModalLeaveGroup from '@/components/layout/ModalLeaveGroup';
+import { useRouter } from 'next/navigation';
+
 interface GroupData {
   group_id: number;
   group_name: string;
@@ -43,6 +47,9 @@ export default function DynamicGroup() {
     const {data,isLoading,error} = useSWR(`/api/posts/group/${groupId}`,fetcher);
     const { data: session, status } = useSession();
     const [curUser, setCurUser] = useState<number | null>(null);
+    const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+    const [isJoined,setIsJoined] = useState(false);
+    const router = useRouter();
 
     const fetchGroupData = async () => {
         if (!groupId) {
@@ -51,9 +58,19 @@ export default function DynamicGroup() {
         }
         const res = await getGroupByGroupId(groupId);
         const data = await res.json();
+   
         setGroupsData(data);
         console.log(data);
     };
+    const fetchIsJoined = async ()=>{
+            if(session?.user.user_id) {
+        const resJoin= await isJoinedGroup(Number(groupId),session.user.user_id)
+        const dataJoin = await resJoin.json()
+        setIsJoined(Boolean(dataJoin))
+       
+    }
+    
+    }
 
     // const fetchGroupPosts = async () => {
     //     if (!groupId) return;
@@ -62,16 +79,34 @@ export default function DynamicGroup() {
     //     setPosts(data);
     // };
 
+  
     useEffect(() => {
         fetchGroupData();
+        fetchIsJoined();
         if (session?.user?.user_id) {
             setCurUser(session.user.user_id);
+          
+            
         }
+        console.log("isjoined",isJoined)
+    
         // fetchGroupPosts();
     }, [groupId, session]);
 
-    if (!groupData) return <Loading/>;
+    const handleLeaveGroup = async () => {
+        if(!curUser) return;
+        try {
+             leaveGroup(parseInt(groupId), curUser);
+            router.push('/groups'); // Chuyển hướng về trang groups sau khi rời nhóm
+        } catch (error) {
+            console.error('Error leaving group:', error);
+        }
+    };
 
+    if (!groupData) return <Loading/>;
+    if(status == 'unauthenticated' ){
+        window.location.href='/'
+    }
     return (
         <div className="max-w-4xl mx-auto p-4 mt-20">
             {/* Group Header */}
@@ -94,7 +129,15 @@ export default function DynamicGroup() {
                             <span className="capitalize">{groupData.privacy}</span>
                         </div>
                     </div>
-                    <ButtonModalCreatePost curUser={session?.user} group_id={Number(groupId)}/>
+                     <div className="flex gap-4">
+                        <ButtonModalCreatePost curUser={session?.user} group_id={Number(groupId)}/>
+                        {isJoined && <button
+                            onClick={() => setShowLeaveModal(true)}
+                            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 cursor-pointer transition-colors"
+                        >
+                            Leave Group
+                        </button>}
+                    </div>
                 </div>
                
             </div>
@@ -147,6 +190,14 @@ export default function DynamicGroup() {
                     </div>
                 ))}
             </div> */}
+
+            <ModalLeaveGroup
+                show={showLeaveModal}
+                setShow={setShowLeaveModal}
+                onConfirm={handleLeaveGroup}
+                title="Leave Group"
+                message="Are you sure you want to leave this group? You can rejoin later if you change your mind."
+            />
         </div>
     );
 }

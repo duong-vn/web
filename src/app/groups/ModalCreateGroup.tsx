@@ -10,10 +10,11 @@ interface IProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   created_by: number | null;
+  fetchGroups: ()=>void;
 }
 
 const ModalCreateGroup = (props: IProps) => {
-  const { isModalOpen, setIsModalOpen, created_by } = props;
+  const { isModalOpen, setIsModalOpen, created_by,fetchGroups } = props;
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -40,6 +41,7 @@ const ModalCreateGroup = (props: IProps) => {
     setImagePreview(null);
     setImage(null);
     setPrivacy('public');
+ 
   };
 
   const handleSubmit = async () => {
@@ -51,7 +53,7 @@ const ModalCreateGroup = (props: IProps) => {
         
         toast.success('Group created successfully');
         handleCloseModal();
-        mutate('api/groups');
+        fetchGroups
       } else {
         toast.error(data.message || 'Error creating group');
       }

@@ -17,7 +17,7 @@ export default function UsersPage() {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const { data: session } = useSession();
+  const { data: session,status } = useSession();
   const { data, error, isLoading } = useSWR<User[]>("/api/users", fetcher);
   const router = useRouter();
 
@@ -52,10 +52,15 @@ export default function UsersPage() {
     router.push(`/users/${user_id}`)
 
   }
+  if(status == 'unauthenticated' ){
+    window.location.href='/'
+    
+}
 
   if (error) return <div>Failed to load users</div>;
   if (isLoading) return <Loading/>;
   if (!data) return <div>No users found</div>;
+ 
 
   return (
     <div className="p-4 ml-64  mt-16 overflow-hidden">

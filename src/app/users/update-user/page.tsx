@@ -15,6 +15,7 @@ interface User {
   gender: string;
   image: string | null;
   role: string;
+  password:string;
   created_at: string;
 }
 
@@ -28,6 +29,8 @@ export default function UpdateUserPage() {
     gender: '',
     password: ''
   });
+  const [imagePreview, setImagePreview] = useState<string | null>(user?.image || null);
+  const [image, setImage] = useState<string | null>(user?.image || null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -57,6 +60,20 @@ export default function UpdateUserPage() {
     setIsEditing(true);
   };
 
+  const handleChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target && event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setImagePreview(URL.createObjectURL(file));
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64Image = reader.result as string;
+        setImage(base64Image);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.user?.user_id) return;
@@ -69,7 +86,7 @@ export default function UpdateUserPage() {
         formData.password,
         formData.gender,
         user?.role || null,
-        user?.image || null
+        image
       );
 
       if (res.ok) {
@@ -112,12 +129,36 @@ export default function UpdateUserPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Avatar */}
-            <div className="flex justify-center mb-6">
-              <img
-                src={user.image || USER_IMAGE}
-                alt={user.username}
-                className="w-32 h-32 rounded-full object-cover border-4 border-gray-700"
-              />
+            <div className="flex flex-col items-center mb-6">
+              <div className="relative group">
+                <img
+                  src={imagePreview || user.image || USER_IMAGE}
+                  alt={user.username}
+                  className="w-32 h-32 rounded-full object-cover border-4 border-gray-700 transition-transform group-hover:scale-105"
+                />
+                {isEditing && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <label
+                      htmlFor="avatar-upload"
+                      className="cursor-pointer p-2 bg-indigo-600 rounded-full hover:bg-indigo-700 transition-colors"
+                    >
+                      <PencilIcon className="h-6 w-6 text-white" />
+                    </label>
+                    <input
+                      type="file"
+                      id="avatar-upload"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={handleChangeImage}
+                    />
+                  </div>
+                )}
+              </div>
+              {isEditing && (
+                <p className="mt-2 text-sm text-gray-400">
+                  Click on the avatar to change your profile picture
+                </p>
+              )}
             </div>
 
             {/* Read-only fields */}
@@ -196,7 +237,7 @@ export default function UpdateUserPage() {
                   <label className="block text-sm font-medium text-gray-400">New Password</label>
                   <input
                     type="password"
-                    value={formData.password}
+                    value={user.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     placeholder="Leave blank to keep current password"
                     className="mt-1 block w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"

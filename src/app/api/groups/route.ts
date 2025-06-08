@@ -220,12 +220,7 @@ export async function DELETE(request: Request) {
     }
 
     // First delete all group members
-    await prisma.group_members.deleteMany({
-      where: {
-        group_id: Number(group_id),
-      },
-    });
-
+  
     // Then delete the group
     await prisma.$executeRaw`
     DECLARE @group_id INT = ${group_id}; -- Thay 123 bằng giá trị group_id bạn muốn xóa

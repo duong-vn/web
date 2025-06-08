@@ -25,7 +25,7 @@ export default function UserDetailPage() {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<EverythingInPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const {data:session} = useSession();
+  const {data:session,status} = useSession();
   const fetchUserData = async () => {
     try {
       const userRes = await getUserById(userId)
@@ -62,6 +62,9 @@ export default function UserDetailPage() {
    
     ;
   }
+  if(status == 'unauthenticated' ){
+    window.location.href='/'
+}
 
   return (
     <div className="p-6 ml-64 mt-20 bg-gray-900 min-h-screen">

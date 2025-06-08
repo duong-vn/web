@@ -301,4 +301,19 @@ export const deletePost = async (post_id: number) => {
   });
 };
 
+export const leaveGroup = async (group_id: number, user_id: number) => {
+  
+    return await fetch(`${API_URL}/groups/leave?group_id=${group_id}&user_id=${user_id}`, {
+      method: 'DELETE',
+    });
+    
+   
+};
+export const  isJoinedGroup = async (group_id: number, user_id: number) => {
+  
+  return await fetch(`${API_URL}/groups/join?group_id=${group_id}&user_id=${user_id}`, {
+    method: 'GET',
+  });
+}
+
 export { postCreateUser, putUpdateUser, deleteUser };

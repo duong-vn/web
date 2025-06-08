@@ -17,7 +17,7 @@ export default function GroupsPage() {
  const [groups,setGroups] = useState([]);
  const [joinedGroup, setJoinedGroup] = useState<[]>([]);
  const [groupSet, setGroupSet] = useState<Set<number>>(new Set());
-  const { data: session } = useSession();
+  const { data: session,status } = useSession();
     const fetchGroups = async ()=>{
      const res = await getGroups();
      const data = await res.json();
@@ -25,20 +25,24 @@ export default function GroupsPage() {
 
 
     } 
+    const getJoinedGroup = async () => {
+      try {
+        const response = await getGroupByUserId(session?.user?.user_id || 0);
+        const data = await response.json();
+        setJoinedGroup(data);
+        
+        
+        
+        console.log('get joined group',data)
+        const groupIds = new Set(data.map((group: any) => group.group_id));
+        setGroupSet(groupIds as Set<number>);
+      } catch (error) {
+        console.error("Error fetching joined groups:", error);
+      }
+    };
+
     useEffect(() => {
-      const getJoinedGroup = async () => {
-        try {
-          const response = await getGroupByUserId(session?.user?.user_id || 0);
-          const data = await response.json();
-          setJoinedGroup(data);
-          console.log('get joined group',data)
-          const groupIds = new Set(data.map((group: any) => group.group_id));
-          setGroupSet(groupIds as Set<number>);
-        } catch (error) {
-          console.error("Error fetching joined groups:", error);
-        }
-      };
-  
+    
       if (session?.user?.user_id) {
         getJoinedGroup();
       }
@@ -60,8 +64,9 @@ export default function GroupsPage() {
       if (res.ok) {
         toast.success(data.message);
         // Fetch lại danh sách groups sau khi tham gia thành công
-        await fetchGroups();
+        getJoinedGroup();
       }
+      
     } catch (error) {
       console.error("Error joining group:", error);
       toast.error("Failed to join group");
@@ -69,7 +74,10 @@ export default function GroupsPage() {
   };
   useEffect(()=>{
     fetchGroups();
-  },[isModalOpen])
+  },[])
+  if(status == 'unauthenticated' ){
+    window.location.href='/'
+}
   return (
     <div className="ml-64 overflow-hidden mt-16">
       <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
@@ -81,11 +89,11 @@ export default function GroupsPage() {
         <div className="p-6">
           <div className="mb-6 flex justify-between items-center">
             <div className="flex-1 max-w-md">
-              <input
+              {/* <input
                 type="text"
                 placeholder="Search groups..."
                 className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              />
+              /> */}
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
@@ -118,6 +126,7 @@ export default function GroupsPage() {
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         created_by={session?.user.user_id || null}
+        fetchGroups={fetchGroups}
       />
     </div>
   );

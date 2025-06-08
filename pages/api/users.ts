@@ -112,36 +112,76 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const { user_id, username, password, full_name, gender, image } = req.body;
 
-      if (!user_id || !username || !password || !full_name || !gender) {
-        res.status(400).json({ message: 'Please fill out the required form' });
+      if (!user_id) {
+        res.status(400).json({ message: 'User ID is required' });
         return;
       }
+     
+    
 
-      const newData: any = {};
-      newData.image = image || null;
-      newData.username = username;
-      const hashedPassword = await bcrypt.hash(password,10);
+      const theUser:number[] = await prisma.$queryRaw`
+      SELECT user_id FROM users WHERE user_id = ${user_id}
+    `;
 
-      newData.password = hashedPassword;
-      newData.full_name = full_name;
-
-      const theUser = await prisma.users.findUnique({
-        where: { user_id }
-      });
-
-      if (!theUser) {
+      if (!theUser || theUser.length === 0) {
         res.status(404).json({ message: 'User not found' });
         return;
       }
 
-      const updatedUser = await prisma.users.update({
-        where: { user_id },
-        data: newData
-      });
+      // Update password if provided
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await prisma.$queryRaw`
+          Update users
+          Set password = ${hashedPassword}
+          where user_id = ${user_id}
+        `;
+      }
+
+      // Update username if provided
+      if (username) {
+        await prisma.$queryRaw`
+          Update users
+          Set username = ${username}
+          where user_id = ${user_id}
+        `;
+      }
+
+      // Update full_name if provided
+      if (full_name) {
+        await prisma.$queryRaw`
+          Update users
+          Set full_name = ${full_name}
+          where user_id = ${user_id}
+        `;
+      }
+
+      // Update image if provided
+      if (image !== undefined) {
+        await prisma.$queryRaw`
+          Update users
+          Set image = ${image}
+          where user_id = ${user_id}
+        `;
+      }
+
+      // Update gender if provided
+      if (gender) {
+        await prisma.$queryRaw`
+          Update users
+          Set gender = ${gender}
+          where user_id = ${user_id}
+        `;
+      }
+
+      // Get updated user
+      const updatedUser:User[] = await prisma.$queryRaw`
+        SELECT * FROM users WHERE user_id = ${user_id}
+      `;
 
       res.status(200).json({
         message: 'User updated successfully',
-        user: updatedUser
+        user: updatedUser[0]
       });
 
     } catch (error) {

@@ -13,6 +13,8 @@ import {
   ChevronRightIcon,
   DocumentTextIcon
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
+import { USER_IMAGE } from '@/app/utils/constants';
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -123,15 +125,18 @@ const Sidebar = () => {
           <div className="p-4 border-t border-gray-800">
             <div className="flex items-center space-x-3 bg-gray-800 p-3 rounded-lg cursor-pointer hover:bg-gray-900" 
             onClick={()=>router.push('/users/update-user')}>
-              <div className="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center">
-                <span className="text-sm font-medium text-gray-300">
-                  {session.user?.email?.[0]?.toUpperCase()}
-                </span>
+              <div className="relative h-8 w-8 rounded-full overflow-hidden">
+                <Image
+                  src={session.user?.image || USER_IMAGE}
+                  alt={session.user?.username || 'User'}
+                  fill
+                  className="object-cover"
+                />
               </div>
               {!isCollapsed && (
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-100 truncate">
-                    {session.user?.email}
+                    {session.user?.username}
                   </p>
                   <p className="text-xs text-gray-400 capitalize">
                     {session.user?.role}

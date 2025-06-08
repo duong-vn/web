@@ -8,26 +8,24 @@ export async function DELETE(
   const post_id = parseInt(params.post_id);
 
   try {
-    // Delete all comments associated with the post first
-    await prisma.comments.deleteMany({
-      where: {
-        post_id: post_id,
-      },
-    });
+    
+    await prisma.$executeRaw`
+    DELETE FROM reactions 
+    WHERE post_id = ${post_id}
+  `;
 
-    // Delete all reactions associated with the post
-    await prisma.reactions.deleteMany({
-      where: {
-        post_id: post_id,
-      },
-    });
 
-    // Delete the post
-    await prisma.posts.delete({
-      where: {
-        post_id: post_id,
-      },
-    });
+    await prisma.$executeRaw`
+    DELETE FROM comments 
+    WHERE post_id = ${post_id}
+  `;
+
+ 
+  // Delete the post
+  await prisma.$executeRaw`
+    DELETE FROM posts 
+    WHERE post_id = ${post_id}
+  `;
 
     return NextResponse.json(
       { message: "Post deleted successfully" },

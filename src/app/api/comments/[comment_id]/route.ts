@@ -9,19 +9,16 @@ export async function DELETE(
 
   try {
     // Delete all reactions associated with the comment first
-    await prisma.reactions.deleteMany({
-      where: {
-        comment_id: comment_id,
-      },
-    });
+    await prisma.$executeRaw`
+    DELETE FROM reactions 
+    WHERE comment_id = ${comment_id}
+  `;
 
-    // Delete the comment
-    await prisma.comments.delete({
-      where: {
-        comment_id: comment_id,
-      },
-    });
-
+  // Delete the comment
+  await prisma.$executeRaw`
+    DELETE FROM comments 
+    WHERE comment_id = ${comment_id}
+  `;
     return NextResponse.json(
       { message: "Comment deleted successfully" },
       { status: 200 }
