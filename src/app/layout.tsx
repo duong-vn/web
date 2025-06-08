@@ -19,9 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="">
         <SessionProvider>
-          <div className="min-h-screen bg-gray-900">
+          <div className="min-h-screen bg-gray-900 ">
             <Header />
             <div className="flex">
               <Sidebar />

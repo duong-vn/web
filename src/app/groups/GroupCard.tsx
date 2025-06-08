@@ -22,9 +22,10 @@ interface GroupCardProps {
   handleJoinGroup: (groupId: number) => void;
   joinedGroup: any[];
   groupSet: Set<number>;
+  fetchGroups: ()=>void;
 }
 
-export default function GroupCard({ group, handleJoinGroup, joinedGroup, groupSet }: GroupCardProps) {
+export default function GroupCard({ group, handleJoinGroup, joinedGroup, groupSet,fetchGroups }: GroupCardProps) {
   const { data: session } = useSession();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const router = useRouter();
@@ -33,7 +34,9 @@ export default function GroupCard({ group, handleJoinGroup, joinedGroup, groupSe
       const response = await deleteGroup(group.group_id);
       if (response.ok) {
         toast.success("Group deleted successfully");
-        mutate("/api/groups");
+        
+        fetchGroups();
+        setShowDeleteModal(false);
       } else {
         toast.error("Failed to delete group");
       }
@@ -80,9 +83,11 @@ export default function GroupCard({ group, handleJoinGroup, joinedGroup, groupSe
         <div className="p-6">
           <h3 className="text-xl font-semibold text-gray-100 mb-2">
             {group.group_name}
-            {group.privacy === "private" && (
+            {group.privacy === "private"? (
               <RiGitRepositoryPrivateFill className="ml-1 inline text-gray-400" />
-            )}
+            ):(<MdOutlinePublic className="ml-1 inline text-gray-400"/>)
+
+            }
           </h3>
           <p className="text-gray-400 mb-4 line-clamp-2">{group.description}</p>
 
@@ -130,6 +135,7 @@ export default function GroupCard({ group, handleJoinGroup, joinedGroup, groupSe
         setShow={setShowDeleteModal}
         group={group}
         onConfirm={handleDelete}
+       
       />
     </>
   );

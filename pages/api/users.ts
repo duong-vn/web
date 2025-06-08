@@ -40,6 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           
       //   }
       // });
+      
           const users = await prisma.$queryRaw`
             SELECT *
             FROM users
@@ -63,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else if (req.method === 'POST') {
     try {
-      const { full_name, username, email, password, gender,image } = req.body;
+      const { full_name, username, email, password, gender,image,role } = req.body;
       
      
       if (!username) {
@@ -86,13 +87,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(400).json({message: 'Invalid email'})
         return;
       }
+      const newRole = role==='admin'?'admin':'user';
+      let finalImage = null;
+      if (image && image.trim() !== '') {
+        finalImage = image;
+      }
 
       const hashedPassword = await bcrypt.hash(password, 10);
      const user = await prisma.$queryRaw`
-  INSERT INTO users (full_name, username, email, password, gender, image)
+  INSERT INTO users (full_name, username, email, password, gender,role, image)
   OUTPUT inserted.*
-  VALUES (${full_name}, ${username}, ${email}, ${hashedPassword}, ${gender}, ${image??''});
+  VALUES (${full_name}, ${username}, ${email}, ${hashedPassword}, ${gender},${newRole}, ${finalImage});
 `;
+
       res.status(201).json({
         message: 'User created successfully',
         user

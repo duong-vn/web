@@ -61,8 +61,13 @@ const ModalCreateUser = (props: IProps) => {
       username,
       email,
       password,
+      role,
       gender
     );
+    if( !role){
+      toast.error('Role ís required')
+      return;
+    }
     try {
       const res = await postCreateUser(
         fullName,
@@ -181,8 +186,10 @@ const ModalCreateUser = (props: IProps) => {
                       className="mt-1 inline-block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 px-4 py-2 h-10"
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
+                      
+                     
                     >
-                      <option value="user">Select Role</option>
+                      
                       <option value="user">User</option>
                       <option value="admin">Admin</option>
                     </select>

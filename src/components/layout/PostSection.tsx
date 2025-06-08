@@ -15,12 +15,14 @@ interface Posts {
     user_image:string|null
 }
 interface IProps{
-    group_id:number
+    posts: EverythingInPost[]
     curUser:number
+    isLoading:boolean
+    error:any
 }
 
-export default function PostSection ({group_id,curUser} : IProps){
-    const {data,isLoading,error} = useSWR(`/api/posts/group/${group_id}`,fetcher);
+export default function PostSection ({posts:data,curUser,isLoading,error} : IProps){
+    // const {data,isLoading,error} = useSWR(`/api/posts/group/${group_id}`,fetcher);
     console.log("data trong post scetion",data);
     
 
@@ -44,7 +46,7 @@ export default function PostSection ({group_id,curUser} : IProps){
             </div>
           ) : (
             <div className="space-y-6">
-              {data.posts?.map((post: any) => (
+              {data?.map((post: any) => (
                 <div key={post.post_id} className="transform transition-all duration-300 hover:scale-[1.01]">
                   <Post post={post} curUser={curUser} />
                 </div>

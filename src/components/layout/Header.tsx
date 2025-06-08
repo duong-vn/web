@@ -11,9 +11,10 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-
+import { useRouter } from "next/navigation";
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session } = useSession();
   const isActive = (path: string) => pathname === path;
 
@@ -35,7 +36,7 @@ export default function Header() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link
+            {/* <Link
               href="/"
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive("/")
@@ -45,8 +46,8 @@ export default function Header() {
             >
               <HomeIcon className="h-5 w-5" />
               <span>Home</span>
-            </Link>
-            <Link
+            </Link> */}
+            {/* <Link
               href="/users"
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive("/users")
@@ -67,8 +68,8 @@ export default function Header() {
             >
               <UserGroupIcon className="h-5 w-5" />
               <span>Groups</span>
-            </Link>
-          </nav>
+            </Link>*/}
+          </nav> 
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
@@ -77,12 +78,15 @@ export default function Header() {
                 <div className="flex items-center space-x-2">
                   <div className="hidden md:block">
                     <p className="text-sm font-medium bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                      Hello, {session.user?.username}
+                      Hello, {session.user?.username  }
                     </p>
                   </div>
                 </div>
                 <button
-                  onClick={() => signOut()}
+                  onClick={async () => {
+                    await signOut()
+                    router.push('/auth/login')
+                  }}
                   className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-gray-800 rounded-lg transition-all duration-200 hover:shadow-sm"
                 >
                   <ArrowRightOnRectangleIcon className="h-5 w-5" />
@@ -91,6 +95,9 @@ export default function Header() {
               </div>
             ) : (
               <div className="flex items-center space-x-3">
+                <p className="text-sm font-medium bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                      Hello, guest
+                    </p>
                 <Link
                   href="/auth/login"
                   className="flex items-center space-x-2 px-4 py-2 text-indigo-400 border border-indigo-600 rounded-lg hover:bg-gray-800 transition-all duration-200 hover:shadow-sm"

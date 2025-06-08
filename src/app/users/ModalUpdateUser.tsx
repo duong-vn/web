@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, EyeSlashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { mutate } from "swr";
 import { toast } from "react-toastify";
 import { putUpdateUser } from "../services/apiServices";
@@ -116,158 +116,111 @@ const ModalUpdateUser = (props: IProps) => {
   return (
     <>
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-          <div className="relative top-20 mx-auto p-6 border w-[500px] shadow-lg rounded-lg bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium leading-6 text-gray-900">
-                {curRole === "admin" ? "Update User" : "View Profile"}
-              </h3>
-              <form className="mt-4 space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 px-4 py-2 h-10"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    readOnly={curRole !== "admin" ? true : false}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 px-4 py-2 h-10"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    readOnly={curRole !== "admin" ? true : false}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 px-4 py-2 h-10"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    readOnly={true}
-                  />
-                </div>
-                {curRole === "admin" && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex min-h-screen items-center justify-center p-4 text-center">
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={handleCloseModal}></div>
+            
+            <div className="relative transform overflow-hidden rounded-2xl bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-700">
+              <div className="absolute top-4 right-4">
+                <button
+                  onClick={handleCloseModal}
+                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+
+              <div className="px-6 py-8">
+                <h3 className="text-xl font-semibold text-white mb-6">
+                  {curRole === "admin" ? "Update User" : "View Profile"}
+                </h3>
+
+                <form className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 px-4 py-2 h-10 pr-12"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-2 top-[50%] transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeSlashIcon className="h-5 w-5" />
-                        ) : (
-                          <EyeIcon className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex">
-                  <div className="w-[60%]">
-                    <label className=" block text-sm font-medium text-gray-700 pl-2">
-                      Gender
-                    </label>
-                    <select
-                      className="mt-1 inline-block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 px-4 py-2 h-10"
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      disabled={curRole !== "admin"}
-                    >
-                      <option value="">Select gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div className="ml-4">
-                    <label className="block text-sm font-medium text-gray-700 pl-2">
-                      Role
-                    </label>
-                    <select
-                      className="mt-1 inline-block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-900 px-4 py-2 h-10"
-                      value={role || "user"}
-                      disabled={curRole !== "admin"}
-                      onChange={(e) => setRole(e.target.value)}
-                    >
-                      <option value="">Select Role</option>
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </div>
-
-                {curRole === "admin" && (
-                  <div className="mt-4">
-                    <label
-                      className="cursor-pointer inline-block px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      htmlFor="upload-image"
-                    >
-                      Add Image
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Full Name
                     </label>
                     <input
-                      type="file"
-                      hidden
-                      id="upload-image"
-                      onChange={(event) => handleChangeImage(event)}
-                      accept="image/*"
+                      type="text"
+                      className="w-full rounded-lg bg-gray-700 border border-gray-600 text-white px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      readOnly={curRole !== "admin"}
                     />
                   </div>
-                )}
-              </form>
-            </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full rounded-lg bg-gray-700 border border-gray-600 text-white px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      readOnly={curRole !== "admin"}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      className="w-full rounded-lg bg-gray-700 border border-gray-600 text-white px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      readOnly={true}
+                    />
+                  </div>
+                  {curRole === "admin" && (
+                    <div className="mt-4">
+                      <label
+                        className="cursor-pointer inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors"
+                        htmlFor="upload-image"
+                      >
+                        Add Image
+                      </label>
+                      <input
+                        type="file"
+                        hidden
+                        id="upload-image"
+                        onChange={handleChangeImage}
+                        accept="image/*"
+                      />
+                    </div>
+                  )}
+                </form>
 
-            <div className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  alt="Image Preview"
-                  className="max-h-48 mx-auto"
-                />
-              ) : (
-                <div className="text-gray-500">Image preview</div>
-              )}
-            </div>
+                <div className="mt-6 border-2 border-dashed border-gray-600 rounded-lg p-4 text-center">
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="Image Preview"
+                      className="max-h-48 mx-auto rounded-lg"
+                    />
+                  ) : (
+                    <div className="text-gray-400">Image preview</div>
+                  )}
+                </div>
+              </div>
 
-            <div className="flex justify-end space-x-3 my-5">
-              <button
-                type="button"
-                onClick={() => handleCloseModal()}
-                className="px-4 py-2 border text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              >
-                {curRole !== "admin" ? "Exit" : "Cancel"}
-              </button>
-              {curRole === "admin" && (
+              <div className="bg-gray-700/50 px-6 py-4 flex justify-end space-x-3">
                 <button
-                  onClick={() => handleSubmit()}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
                 >
-                  Edit
+                  {curRole !== "admin" ? "Exit" : "Cancel"}
                 </button>
-              )}
+                {curRole === "admin" && (
+                  <button
+                    onClick={handleSubmit}
+                    className="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition-colors"
+                  >
+                    Save Changes
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

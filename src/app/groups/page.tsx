@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import { PlusIcon } from "@heroicons/react/24/outline";
+
 import GroupCard from "./GroupCard";
-import useSWR from "swr";
-import { mutate } from "swr";
+
 import { useSession } from "next-auth/react";
 import ModalCreateGroup from "./ModalCreateGroup";
 import { getGroups, postJoinGroup,getGroupByUserId } from "../services/apiServices";
@@ -70,9 +69,9 @@ export default function GroupsPage() {
   };
   useEffect(()=>{
     fetchGroups();
-  },[])
+  },[isModalOpen])
   return (
-    <div className="p-4 ml-64 h-[calc(100vh-64px)] mt-16">
+    <div className="ml-64 overflow-hidden mt-16">
       <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-700">
           <h1 className="text-2xl font-bold text-gray-100 ">Groups</h1>
@@ -106,6 +105,7 @@ export default function GroupsPage() {
                     handleJoinGroup={handleJoinGroup}
                     joinedGroup={joinedGroup}
                     groupSet={groupSet}
+                    fetchGroups={fetchGroups}
                   />
                 ))}
               </div>

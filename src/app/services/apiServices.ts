@@ -198,14 +198,11 @@ export const postCreateComment = async (
 };
 
 export const deleteComment = async (comment_id: number) => {
-  return await fetch(`${API_URL}/comments`, {
+  return fetch(`${API_URL}/comments/${comment_id}`, {
     method: "DELETE",
     headers: {
-      "Content-type": "application/json",
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      comment_id,
-    }),
   });
 };
 
@@ -292,6 +289,15 @@ export const postCreatePost = async (group_id: number, user_id: number, content:
       content,
       image
     }),
+  });
+};
+
+export const deletePost = async (post_id: number) => {
+  return fetch(`${API_URL}/posts/${post_id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 

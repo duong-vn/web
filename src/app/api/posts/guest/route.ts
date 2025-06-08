@@ -15,19 +15,11 @@ interface Posts {
     user_image:string|null
 }
 
-export async function GET (request:NextRequest,{params}:{params:{groupID:string}}){
+export async function GET (){
   
-    
-const {groupID} = await params;
-const group_id = groupID
  
-if (!groupID) {
-    return NextResponse.json(
-        { message: 'Group ID is required' },
-        { status: 400 }
-    )}else{
-            try{
-                const posts : Posts[] = await prisma.$queryRaw`
+try{
+    const posts : Posts[] = await prisma.$queryRaw`
       SELECT 
         p.post_id, 
         p.content, 
@@ -43,16 +35,19 @@ if (!groupID) {
       FROM posts p  
       JOIN groups g ON p.group_id = g.group_id
       JOIN users u ON p.user_id = u.user_id
-      Where p.group_id = ${group_id}
+      Where g.privacy = 'public'
       ORDER BY p.created_at DESC
     `;
-             return   NextResponse.json({message:'fetch post successfully', posts},{status : 200});
+    
+return  NextResponse.json( posts);
 
             }catch(error){
-              return  NextResponse.json({message: "Error while fetching posts",error},{status:500})
+              return NextResponse.json({message: "Error while fetching posts",error},{status:500})
             }
 
 
-    }
+   
+   
+        }
 
-}
+

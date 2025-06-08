@@ -2,27 +2,32 @@
 import useSWR from "swr";
 import Post from "../../components/layout/Post";
 import { useEffect, useState } from "react";
-
-
+import Loading from "@/components/layout/Loading";
 import ButtonModalCreatePost from '../../components/layout/ButtonModalCreatePost'
 import { useSession } from "next-auth/react";
 import { fetcher } from "../utils/fetcher";
-
+import PostSection from "@/components/layout/PostSection";
 
 export default function PostsPage() {
-  const { data, error, isLoading } = useSWR("/api/posts", fetcher);
-  const [show,setShow] = useState(false);
-  const { data: session,status } = useSession();
-  const [curUser, setCurUser] = useState<any>(0);
- 
+  const [show, setShow] = useState(false);
+  const { data: session, status } = useSession();
+  const [curUser, setCurUser] = useState<number>(0);
 
   useEffect(() => {
-    setCurUser(session?.user?.user_id );
+    setCurUser(session?.user?.user_id ?? 0);
   }, [session]);
+
+  const { data, error, isLoading } = useSWR(
+    status !== 'loading' ? (curUser ? `/api/posts?user_id=${curUser}` : '/api/posts/guest') : null,
+    fetcher
+  );
+console.log('data trong post',data);
   if (status === 'loading') {
     return <p>Đang kiểm tra phiên đăng nhập...</p>;
   }
-  if (status === 'authenticated') {
+if(isLoading){
+  return(<Loading/>)
+}
   return (
     <div className="p-6 ml-64 mt-20 bg-gray-900 min-h-screen">
       <div className="max-w-5xl mx-auto">
@@ -35,38 +40,13 @@ export default function PostsPage() {
               </h1>
               <p className="text-gray-400 mt-1">Explore Posts</p>
             </div>
-            <ButtonModalCreatePost curUser={session?.user} group_id={0}/>
+            {curUser?  <ButtonModalCreatePost curUser={session?.user} group_id={0}/> : ''}
+            
           </div>
         </div> 
-      
-        {/* Content Section */}
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="relative">
-              <div className="w-12 h-12 rounded-full absolute border-4 border-gray-700"></div>
-              <div className="w-12 h-12 rounded-full animate-spin absolute border-4 border-indigo-500 border-t-transparent"></div>
-            </div>
-          </div>
-        ) : error ? (
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 text-center">
-            <div className="text-red-400 text-lg font-medium">
-              Cannot load posts
-            </div>
-            <p className="text-gray-400 mt-2">
-              Try again later
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {data?.map((post: any) => (
-              <div key={post.post_id} className="transform transition-all duration-300 hover:scale-[1.01]">
-                <Post post={post} curUser={curUser} />
-              </div>
-            ))}
-          </div>
-        )}
+
+        {data && <PostSection isLoading={isLoading} error={error} posts={data} curUser={curUser}/>}
       </div>
     </div>
   );
-}
 }

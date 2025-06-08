@@ -14,6 +14,7 @@ interface IProps {
   setShow: (isOpen: boolean) => void;
   group: Group ;
   onConfirm: () => void;
+  
 }
 
 const ModalDeleteGroup = ({ show, setShow, group, onConfirm }: IProps) => {

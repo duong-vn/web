@@ -1,30 +1,46 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 
 import {prisma} from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const {searchParams} = new URL(request.url)
+  const user_id = searchParams.get("user_id");
   try {
-    const posts = await prisma.$queryRaw`
-      SELECT 
-        p.post_id, 
-        p.content, 
-        p.created_at, 
-        p.user_id, 
-        p.group_id, 
-        p.image,
-        g.privacy,
-        g.group_name,
-        g.image as group_image,
-        u.username,
-        u.image as user_image
-      FROM posts p  
-      JOIN groups g ON p.group_id = g.group_id
-      JOIN users u ON p.user_id = u.user_id
-      ORDER BY p.created_at DESC
+    const posts: Post[] = await prisma.$queryRaw`
+        SELECT
+    p.post_id,
+    p.content,
+    p.created_at,
+    p.user_id,
+    p.group_id,
+    p.image,
+    g.privacy,
+    g.group_name,
+    g.image as group_image,
+    u.username,
+    u.image as user_image
+FROM
+    posts p
+JOIN
+    users u ON p.user_id = u.user_id
+JOIN
+    groups g ON p.group_id = g.group_id
+WHERE
+    
+    g.privacy = 'public'
+    OR
+    
+    p.group_id IN (
+        SELECT gm.group_id
+        FROM group_members gm
+        WHERE gm.user_id = ${user_id} 
+    )
+ORDER BY
+    p.created_at DESC;
     `;
 
-    if (!posts) {
+    if (posts.length == 0 ) {
       return NextResponse.json({ message: "No posts found" }, { status: 404 });
     }
     return NextResponse.json(posts);
@@ -57,6 +73,10 @@ export async function POST(request: Request) {
         user_id: Number(user_id)
       }
     });
+    let finalImage = null;
+    if (image && image.trim() !== '') {
+      finalImage = image;
+    }
 
     if (!groupMember) {
       return NextResponse.json(
@@ -68,7 +88,7 @@ export async function POST(request: Request) {
     // Create the post
     const post = await prisma.$executeRaw`
       INSERT INTO posts(user_id,group_id,image,content)
-      VALUES (${user_id},${group_id},${image??''},${content})
+      VALUES (${user_id},${group_id},${finalImage},${content})
     
     `
 

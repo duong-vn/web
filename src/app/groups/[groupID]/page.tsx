@@ -9,8 +9,8 @@ import PostSection from "@/components/layout/PostSection";
 import { useSession } from "next-auth/react";
 import Loading from "@/components/layout/Loading";
 import ButtonModalCreatePost from "@/components/layout/ButtonModalCreatePost";
-import { number } from "motion";
-
+import { fetcher } from "@/app/utils/fetcher";
+import useSWR from "swr";
 interface GroupData {
   group_id: number;
   group_name: string;
@@ -40,7 +40,7 @@ export default function DynamicGroup() {
     const params = useParams();
     const groupId = params?.groupID as string;
     const [groupData, setGroupsData] = useState<GroupData | null>(null);
-    const [posts, setPosts] = useState<Post[]>([]);
+    const {data,isLoading,error} = useSWR(`/api/posts/group/${groupId}`,fetcher);
     const { data: session, status } = useSession();
     const [curUser, setCurUser] = useState<number | null>(null);
 
@@ -70,7 +70,7 @@ export default function DynamicGroup() {
         // fetchGroupPosts();
     }, [groupId, session]);
 
-    if (!groupData) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    if (!groupData) return <Loading/>;
 
     return (
         <div className="max-w-4xl mx-auto p-4 mt-20">
@@ -106,7 +106,7 @@ export default function DynamicGroup() {
                 ('')}
                 
             
-            {curUser && <PostSection group_id={Number(groupId)} curUser={curUser} />}
+            {curUser && data && <PostSection posts={data.posts} curUser={curUser} isLoading={isLoading} error={error} />}
            
             {/* {status === 'unauthenticated' &&
 

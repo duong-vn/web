@@ -125,14 +125,15 @@ export async function POST(request: Request) {
         { message: "Group name is required" },
         { status: 400 }
       );
+    } let finalImage = null;
+    if (image && image.trim() !== '') {
+      finalImage = image;
     }
 
     const groups = await prisma.$queryRaw<Group[]>`
     INSERT INTO groups (group_name, description, created_by,image,number_of_members,privacy)
     OUTPUT inserted.*
-    VALUES (${body.group_name}, ${description}, ${created_by}, ${
-      image ?? ""
-    },1,${privacy});
+    VALUES (${body.group_name}, ${description}, ${created_by}, ${finalImage},1,${privacy});
   `;
     // var groups : Group[] = [];
     // if(image){

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
   HomeIcon,
@@ -19,6 +19,7 @@ const Sidebar = () => {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter()
 
   // Handle initial state and hydration
   useEffect(() => {
@@ -38,8 +39,8 @@ const Sidebar = () => {
   }, [isCollapsed, mounted]);
 
   const isAuthenticated = status === 'authenticated';
-  // const isAdmin = session?.user?.role === 'admin';
-  const isAdmin = true;
+  const isAdmin = isAuthenticated;
+  // const isAdmin = true;
   const menuItems = [
     { name: 'Home', href: '/', icon: HomeIcon, show: true },
     { name: 'Posts', href: '/posts', icon: DocumentTextIcon, show: true },
@@ -120,7 +121,8 @@ const Sidebar = () => {
         {/* User Info */}
         {session && (
           <div className="p-4 border-t border-gray-800">
-            <div className="flex items-center space-x-3 bg-gray-800 p-3 rounded-lg">
+            <div className="flex items-center space-x-3 bg-gray-800 p-3 rounded-lg cursor-pointer hover:bg-gray-900" 
+            onClick={()=>router.push('/users/update-user')}>
               <div className="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center">
                 <span className="text-sm font-medium text-gray-300">
                   {session.user?.email?.[0]?.toUpperCase()}

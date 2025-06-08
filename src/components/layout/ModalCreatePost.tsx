@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { mutate } from 'swr';
 import { useSession } from 'next-auth/react';
 import { getGroupByUserId, postCreatePost } from '../../app/services/apiServices';
-import { USER_IMAGE, GROUP_IMAGE } from '../../app/utils/constants';
+import { USER_IMAGE, GROUP_IMAGE, API_URL } from '../../app/utils/constants';
 
 interface IProps {
   show: boolean;
@@ -81,7 +81,7 @@ export default function ModalCreatePost({ show, setShow,curUser,group_id }: IPro
       if (res.ok) {
         toast.success('Post created successfully');
         setShow(false);
-        mutate('/api/posts');
+        mutate(`/api/posts?user_id=${curUser.user_id}`);
         mutate(`/api/posts/group/${group_id}`);
         // Reset form
         setSelectedGroup('');

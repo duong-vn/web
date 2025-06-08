@@ -16,7 +16,7 @@ interface Posts {
 }
 
 export async function GET (request:NextRequest,{params}:{params:{userID:string}}){
-    console.log('params',params);
+    
 const {userID} = params;
 
  

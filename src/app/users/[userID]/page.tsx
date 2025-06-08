@@ -55,7 +55,12 @@ export default function UserDetailPage() {
   }, [userId]);
 
   if (isLoading || !user) {
-    return <Loading />;
+    return <div className='pt-40'>
+      
+       <Loading />
+       </div>
+   
+    ;
   }
 
   return (
@@ -85,7 +90,7 @@ export default function UserDetailPage() {
 
         {/* User's Posts */}
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Posts</h2>
+          <div className='border-b border-gray-600'></div>
           {posts.length === 0 ? (
             <div className="text-center text-gray-400 py-8">
               No posts yet
