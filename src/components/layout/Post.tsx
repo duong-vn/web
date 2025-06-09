@@ -12,7 +12,13 @@ import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 import { GROUP_IMAGE, USER_IMAGE } from "../../app/utils/constants";
-import { deleteReaction, getReactionsByPostId, isLikePost, postCreateReactionByPostId, deletePost } from "@/app/services/apiServices";
+import {
+  deleteReaction,
+  getReactionsByPostId,
+  isLikePost,
+  postCreateReactionByPostId,
+  deletePost,
+} from "@/app/services/apiServices";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { mutate } from "swr";
@@ -47,35 +53,32 @@ const Post = ({ post, curUser }: PostProps) => {
     setLikeCount(responseData.likeCount);
   };
   const fetchReactionsForUser = async () => {
-   
-    const res = await isLikePost(data.post_id,curUser)
+    const res = await isLikePost(data.post_id, curUser);
     const likeData = await res.json();
-    console.log('like data from post',likeData);
+    console.log("like data from post", likeData);
     setIsLiked(likeData);
-  }
+  };
 
   useEffect(() => {
     fetchReactions();
     fetchReactionsForUser();
   }, []);
-  const handleUnLike  = async () => {
-    await deleteReaction(curUser,data.post_id)
-   fetchReactions();
-   setIsLiked(!isLiked);
-   console.log("gorup name and post shi >>>", data,'>>>')
-
+  const handleUnLike = async () => {
+    await deleteReaction(curUser, data.post_id);
+    fetchReactions();
+    setIsLiked(!isLiked);
+    console.log("gorup name and post  >>>", data, ">>>");
   };
 
   const handleLike = async () => {
-    if(!curUser){
-      toast.error("You need to be signed in in order to react")
+    if (!curUser) {
+      toast.error("You need to be signed in in order to react");
       return;
     }
-    await postCreateReactionByPostId(curUser,data.post_id)
-   
-   fetchReactions();
-   setIsLiked(!isLiked);
+    await postCreateReactionByPostId(curUser, data.post_id);
 
+    fetchReactions();
+    setIsLiked(!isLiked);
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
@@ -88,7 +91,7 @@ const Post = ({ post, curUser }: PostProps) => {
       toast.error("You need to be signed in to delete posts");
       return;
     }
-    
+
     if (curUser !== data.user_id) {
       toast.error("You can only delete your own posts");
       return;
@@ -119,7 +122,11 @@ const Post = ({ post, curUser }: PostProps) => {
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
             <img
-              src={(data.group_image?.length === 0 || !data.group_image)? GROUP_IMAGE :data.group_image }
+              src={
+                data.group_image?.length === 0 || !data.group_image
+                  ? GROUP_IMAGE
+                  : data.group_image
+              }
               alt={data.group_name}
               className="h-14 w-14 object-cover rounded-xl ring-2 ring-gray-700 hover:ring-indigo-500 transition-all duration-300"
             />
@@ -127,33 +134,45 @@ const Post = ({ post, curUser }: PostProps) => {
           <div className="flex-1">
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
-                <span onClick={()=>{
-                  if(curUser == 0 ){
-                    toast.error('You need to sign up before viewing content');
-                    router.push('/auth/login');
-                  }else{router.push(`/groups/${data.group_id}`)}
-                }}
-                className="text-lg font-bold text-gray-100 cursor-pointer hover:text-indigo-400 transition-colors duration-200">
+                <span
+                  onClick={() => {
+                    if (curUser == 0) {
+                      toast.error("You need to sign up before viewing content");
+                      router.push("/auth/login");
+                    } else {
+                      router.push(`/groups/${data.group_id}`);
+                    }
+                  }}
+                  className="text-lg font-bold text-gray-100 cursor-pointer hover:text-indigo-400 transition-colors duration-200"
+                >
                   {data.group_name}
                 </span>
-                
+
                 <div className="flex items-center gap-2 mt-1">
                   <img
                     src={data.user_image ?? USER_IMAGE}
                     alt={data.username}
                     className="h-5 w-5 object-cover rounded-full ring-1 ring-gray-600"
                   />
-                  <span className="font-medium text-gray-300 cursor-pointer hover:text-indigo-400" 
-                  onClick={()=>{
-                    if(curUser == 0 ){
-                      toast.error('You need to sign up before viewing content');
-                      router.push('/auth/login');
-                    }else{
-                    router.push(`/users/${data.user_id}`)
-                  }
-                    }}>{data.username}</span>
+                  <span
+                    className="font-medium text-gray-300 cursor-pointer hover:text-indigo-400"
+                    onClick={() => {
+                      if (curUser == 0) {
+                        toast.error(
+                          "You need to sign up before viewing content"
+                        );
+                        router.push("/auth/login");
+                      } else {
+                        router.push(`/users/${data.user_id}`);
+                      }
+                    }}
+                  >
+                    {data.username}
+                  </span>
                   <span className="text-gray-600">•</span>
-                  <span className="text-gray-400">{new Date(data.created_at).toLocaleDateString()}</span>
+                  <span className="text-gray-400">
+                    {new Date(data.created_at).toLocaleDateString()}
+                  </span>
                   <span className="text-gray-600">•</span>
                   <span className="flex items-center text-gray-400">
                     {data.privacy?.toLowerCase() === "public" ? (
@@ -184,12 +203,12 @@ const Post = ({ post, curUser }: PostProps) => {
         </div>
 
         {/* Post Image */}
-        {(data.image != null ) && (
+        {data.image != null && (
           <div className="mb-6 rounded-xl overflow-hidden">
             <div className="max-w-2xl mx-auto">
-              <img 
+              <img
                 src={data.image}
-                className="w-full h-auto max-h-[500px] object-contain rounded-lg hover:scale-[1.02] transition-transform duration-300" 
+                className="w-full h-auto max-h-[500px] object-contain rounded-lg hover:scale-[1.02] transition-transform duration-300"
                 alt="Post content"
               />
             </div>
@@ -201,7 +220,7 @@ const Post = ({ post, curUser }: PostProps) => {
 
         {/* Interaction Section */}
         <div className="flex flex-row gap-6 mb-4">
-          <div className="flex flex-row items-center gap-2"> 
+          <div className="flex flex-row items-center gap-2">
             {isLiked ? (
               <button
                 onClick={handleUnLike}
@@ -220,24 +239,33 @@ const Post = ({ post, curUser }: PostProps) => {
               </button>
             )}
           </div>
-          
+
           <button
             onClick={() => setShowComment(!showComment)}
             className="group flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 bg-gray-700/50 hover:bg-gray-700/70"
           >
             <ChatBubbleLeftIcon className="h-6 w-6 text-gray-400 group-hover:text-blue-500 group-hover:scale-110 transition-all duration-300" />
-            <span className="text-gray-400 font-semibold group-hover:text-blue-500">Comment</span>
+            <span className="text-gray-400 font-semibold group-hover:text-blue-500">
+              Comment
+            </span>
           </button>
         </div>
-          {showComment &&
-        <Comments post_id={data.post_id} curUser={curUser} showComment={showComment} />}
+        {showComment && (
+          <Comments
+            post_id={data.post_id}
+            curUser={curUser}
+            showComment={showComment}
+          />
+        )}
 
         {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-100">Edit Post</h2>
+                <h2 className="text-xl font-semibold text-gray-100">
+                  Edit Post
+                </h2>
                 <button
                   onClick={() => setShowModal(false)}
                   className="text-gray-400 hover:text-gray-300"
@@ -246,7 +274,6 @@ const Post = ({ post, curUser }: PostProps) => {
                 </button>
               </div>
               <form onSubmit={handleEditSubmit} className="space-y-4">
-               
                 <div>
                   <label
                     htmlFor="content"
