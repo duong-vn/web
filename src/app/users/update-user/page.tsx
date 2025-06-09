@@ -20,7 +20,7 @@ interface User {
 }
 
 export default function UpdateUserPage() {
-  const { data: session } = useSession();
+  const { data: session ,status} = useSession();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -31,7 +31,9 @@ export default function UpdateUserPage() {
   });
   const [imagePreview, setImagePreview] = useState<string | null>(user?.image || null);
   const [image, setImage] = useState<string | null>(user?.image || null);
-
+  if(status == 'unauthenticated' ){
+    window.location.href='/'
+}
   useEffect(() => {
     const fetchUserData = async () => {
       if (session?.user?.user_id) {
