@@ -4,21 +4,21 @@ import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const {status} = useSession();
+  // const {status} = useSession();
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
-  if(status == 'authenticated' ){
-    toast.error(`You've already signed in`)
-    window.location.href='/'
-}
+//   if(status == 'authenticated' ){
+//     toast.error(`You've already signed in`)
+//     window.location.href='/'
+// }
   const handleLogin = async (e: React.FormEvent) => {
     console.log(
       "Login attempt with email:",

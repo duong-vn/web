@@ -110,7 +110,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else if (req.method === 'PUT') {
     try {
-      const { user_id, username, password, full_name, gender, image } = req.body;
+      const { user_id, username, password, full_name, gender,role, image } = req.body;
 
       if (!user_id) {
         res.status(400).json({ message: 'User ID is required' });
@@ -143,6 +143,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await prisma.$queryRaw`
           Update users
           Set username = ${username}
+          where user_id = ${user_id}
+        `;
+      }
+      if (role && role.length > 0) {
+        
+        await prisma.$queryRaw`
+          Update users
+          Set role = ${role}
           where user_id = ${user_id}
         `;
       }

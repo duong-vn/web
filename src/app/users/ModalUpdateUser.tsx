@@ -17,7 +17,7 @@ interface IProps {
 const ModalUpdateUser = (props: IProps) => {
   const { isModalOpen, setIsModalOpen, user, setUser } = props;
   const [user_id, setUser_id] = useState(user?.user_id || 0);
-  const [role, setRole] = useState<string | null>(user?.role || null);
+  const [role, setRole] = useState<string >(user?.role);
   const [fullName, setFullName] = useState(user?.full_name || "");
   console.log("check user>>>", user);
   console.log("check user_id>>>", user_id);
@@ -161,7 +161,7 @@ const ModalUpdateUser = (props: IProps) => {
                       readOnly={curRole !== "admin"}
                     />
                   </div>
-                  <div>
+                  {curRole === "admin" && <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       Email
                     </label>
@@ -172,8 +172,41 @@ const ModalUpdateUser = (props: IProps) => {
                       onChange={(e) => setEmail(e.target.value)}
                       readOnly={true}
                     />
-                  </div>
+                  </div>}
                   <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Gender
+                    </label>
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="w-full rounded-lg bg-gray-700 border border-gray-600 text-white px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      disabled={curRole !== "admin"}
+                    >
+                      <option value="">Select gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  {curRole === "admin" && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Role
+                      </label>
+                      <select
+                        value={role || "user"}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="w-full rounded-lg bg-gray-700 border border-gray-600 text-white px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      >
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </div>
+                  )}
+
+{curRole === "admin" &&  <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
                       New Password (optional)
                     </label>
@@ -184,6 +217,7 @@ const ModalUpdateUser = (props: IProps) => {
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full rounded-lg bg-gray-700 border border-gray-600 text-white px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         placeholder="Leave blank to keep current password"
+                        
                       />
                       <button
                         type="button"
@@ -202,7 +236,7 @@ const ModalUpdateUser = (props: IProps) => {
                         )}
                       </button>
                     </div>
-                  </div>
+                  </div>}
                   {curRole === "admin" && (
                     <div className="mt-4">
                       <label

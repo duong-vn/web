@@ -5,7 +5,7 @@ import { mutate } from "swr";
 import { toast } from "react-toastify";
 import { postCreateUser } from "@/app/services/apiServices";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+
 interface IProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
@@ -24,14 +24,11 @@ const ModalCreateUser = (props: IProps) => {
   const [image, setImage] = useState<any | null>(null);
   const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
   const router = useRouter();
-  const {status} = useSession();
+  
   const validateEmail = (e: string) => {
     return isValidEmail.test(e);
   };
-  if(status == 'authenticated' ){
-    toast.error(`You've already signed in`)
-    // window.location.href='/'
-}
+  
 
 
   const handleChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
