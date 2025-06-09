@@ -119,7 +119,7 @@ const Post = ({ post, curUser }: PostProps) => {
         <div className="flex items-center gap-4 mb-6">
           <div className="relative">
             <img
-              src={(data.image?.length === 0 || !data.image)? GROUP_IMAGE :data.image }
+              src={(data.group_image?.length === 0 || !data.group_image)? GROUP_IMAGE :data.group_image }
               alt={data.group_name}
               className="h-14 w-14 object-cover rounded-xl ring-2 ring-gray-700 hover:ring-indigo-500 transition-all duration-300"
             />

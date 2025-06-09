@@ -129,7 +129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Update password if provided
-      if (password) {
+      if (password && password.trim() !== '') {
         const hashedPassword = await bcrypt.hash(password, 10);
         await prisma.$queryRaw`
           Update users
@@ -157,7 +157,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Update image if provided
-      if (image !== undefined) {
+      if (image) {
+        let finalImage = null;
+        if ( image.length > 0){
+          finalImage = image;
+        }
         await prisma.$queryRaw`
           Update users
           Set image = ${image}

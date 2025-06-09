@@ -127,6 +127,7 @@ export default function GroupsPage() {
         setIsModalOpen={setIsModalOpen}
         created_by={session?.user.user_id || null}
         fetchGroups={fetchGroups}
+        getJoinedGroup = { getJoinedGroup}
       />
     </div>
   );

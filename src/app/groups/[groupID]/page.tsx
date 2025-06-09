@@ -97,6 +97,8 @@ export default function DynamicGroup() {
         if(!curUser) return;
         try {
              leaveGroup(parseInt(groupId), curUser);
+             fetchGroupData();
+        fetchIsJoined();
             router.push('/groups'); // Chuyển hướng về trang groups sau khi rời nhóm
         } catch (error) {
             console.error('Error leaving group:', error);

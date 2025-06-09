@@ -237,9 +237,9 @@ export default function UpdateUserPage() {
                   <label className="block text-sm font-medium text-gray-400">New Password</label>
                   <input
                     type="password"
-                    value={user.password}
+                    value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="Leave blank to keep current password"
+                    placeholder="Enter new password"
                     className="mt-1 block w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
                   />
                 </div>

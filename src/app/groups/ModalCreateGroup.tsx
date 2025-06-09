@@ -11,10 +11,11 @@ interface IProps {
   setIsModalOpen: (isOpen: boolean) => void;
   created_by: number | null;
   fetchGroups: ()=>void;
+  getJoinedGroup : ()=>void;
 }
 
 const ModalCreateGroup = (props: IProps) => {
-  const { isModalOpen, setIsModalOpen, created_by,fetchGroups } = props;
+  const { isModalOpen, setIsModalOpen, created_by,fetchGroups,getJoinedGroup } = props;
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -52,8 +53,10 @@ const ModalCreateGroup = (props: IProps) => {
       if (res.ok) {
         
         toast.success('Group created successfully');
+        fetchGroups();
+        getJoinedGroup();
         handleCloseModal();
-        fetchGroups
+        
       } else {
         toast.error(data.message || 'Error creating group');
       }
